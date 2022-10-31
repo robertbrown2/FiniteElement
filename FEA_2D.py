@@ -139,7 +139,7 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, colormap):
     ydi2 = yList[i2] + u[n4]*factor
     ydi3 = yList[i3] + u[n6]*factor
     #X = Matrix([[xdi1, ydi1], [xdi2, ydi2], [xdi3, ydi3]])
-    cval = cm.get_color(sigmaMax[i], min(sigmaMax), max(sigmaMax))
+    cval = get_color(sigmaMax[i], min(sigmaMax), max(sigmaMax))
     #cval = get_color(stress_VM[i], min(stress_VM), max(stress_VM))
     t1, = pyplot.fill([xdi1, xdi2, xdi3], [ydi1, ydi2, ydi3], color = cval)
   pyplot.xlabel('x ['+lengthUnit+']')
