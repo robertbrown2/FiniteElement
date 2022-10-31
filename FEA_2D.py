@@ -64,7 +64,7 @@ def CST_B(x1, x2, x3, y1, y2, y3):
   return B
 
 
-def get_color(val, min, max):
+def get_color(val, min, max, colormap):
   diff = max-min
   if (diff == 0):
     x = 0.5
@@ -140,7 +140,7 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString)
     ydi2 = yList[i2] + u[n4]*factor
     ydi3 = yList[i3] + u[n6]*factor
     #X = Matrix([[xdi1, ydi1], [xdi2, ydi2], [xdi3, ydi3]])
-    cval = get_color(sigmaMax[i], min(sigmaMax), max(sigmaMax))
+    cval = get_color(sigmaMax[i], min(sigmaMax), max(sigmaMax), colormap)
     #cval = get_color(stress_VM[i], min(stress_VM), max(stress_VM))
     t1, = pyplot.fill([xdi1, xdi2, xdi3], [ydi1, ydi2, ydi3], color = cval)
   pyplot.xlabel('x ['+lengthUnit+']')
