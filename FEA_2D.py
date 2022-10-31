@@ -73,7 +73,7 @@ def get_color(val, min, max, colormap):
   colorVal = colormap(float(x)) #scalarMap.to_rgba(x)
   return colorVal
 
-def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString):
+def CST_plot(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString):
   from matplotlib import pyplot
   from matplotlib import cm
   from matplotlib import colors
