@@ -61,3 +61,4 @@ def CST_B(x1, x2, x3, y1, y2, y3):
              [    0,       dpsi1dxy[1],     0,       dpsi2dxy[1],       0,     dpsi3dxy[1]],
              [dpsi1dxy[1], dpsi1dxy[0], dpsi2dxy[1], dpsi2dxy[0], dpsi3dxy[1], dpsi3dxy[0]]
             ])
+  return B
