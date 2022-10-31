@@ -87,18 +87,19 @@ def get_color(val, min, max, colormap):
   colorVal = colormap(float(x)) #scalarMap.to_rgba(x)
   return colorVal
 
-def CST_plot(xList, yList, conn, u, sigmaMax, stressUnit="", lengthUnit="", cmapString="jet"):
+def CST_plot(xList, yList, conn, u, sigmaMax, stressUnit="", lengthUnit="", cmapString="jet", scaling=None):
   """
   Plots a completed simulation using CST elements.
   Usage: CST_plot(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString)
-  xList - list of x positions of nodes
-  yList - list of y positions of nodes
-  conn  - connectivity array or list of lists.  Each "row" should have three nodes.
-  u     - solution to FEA problem
-  sigmaMax - Maximum stress on each node (this will color each element)
-  stressUnit - Stress unit for display in plot.  Typically "Pa" or "psi".  Defaults to ""
-  lengthUnit - Length unit for display in plot.  Typically "m" or "in".  Defaults to ""
-  cmapString - Name of desired colormap.  Defaults to "jet"
+  xList - (array - nnode) list of x positions of nodes
+  yList - (array - nnode) list of y positions of nodes
+  conn  - (array - nElem by 3) connectivity array or list of lists.  Each "row" should have three nodes.
+  u     - (array - nnode*2) solution to FEA problem - ordered [u1, v1, u2, v2 ...]
+  sigmaMax - (array - nElem) Maximum stress on each node (this will color each element)
+  stressUnit: (string) Stress unit for display in plot.  Typically "Pa" or "psi".  Defaults to ""
+  lengthUnit: (string) Length unit for display in plot.  Typically "m" or "in".  Defaults to ""
+  cmapString: (string) Name of desired colormap.  Defaults to "jet"
+  scaling: (float) Factor used for displacement in plot.  If None, will be calculated in function.
   """
   from matplotlib import pyplot
   from matplotlib import cm
@@ -127,7 +128,10 @@ def CST_plot(xList, yList, conn, u, sigmaMax, stressUnit="", lengthUnit="", cmap
   dxmax = max(xList)-min(xList)
   dymax = max(yList)-min(yList)
   rmax = sqrt(dxmax**2+dymax**2)
-  factor = max(floor(rmax/(25*max(u))), 1)
+  if scaling == None:
+    factor = max(floor(rmax/(25*max(u))), 1)
+  else:
+    factor = scaling
   for i, x in enumerate(xList):
     y = yList[i]
     pyplot.annotate(i+1, (x+.01*rmax, y))
