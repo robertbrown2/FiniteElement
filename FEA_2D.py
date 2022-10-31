@@ -79,7 +79,6 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString)
   from matplotlib import colors
   from matplotlib import colorbar
   from matplotlib import figure
-  from matplotlib import colormaps as maps
   from numpy import array, sqrt, floor
 
   colormap=pyplot.get_cmap(cmapString)
