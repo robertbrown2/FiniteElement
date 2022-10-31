@@ -73,14 +73,16 @@ def get_color(val, min, max):
   colorVal = colormap(float(x)) #scalarMap.to_rgba(x)
   return colorVal
 
-def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, colormap):
+def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString):
   from matplotlib import pyplot
   from matplotlib import cm
   from matplotlib import colors
   from matplotlib import colorbar
   from matplotlib import figure
+  from matplotlib import colormaps as maps
   from numpy import array, sqrt, floor
 
+  colormap=pyplot.get_cmap(cmapString)
   # must be defined: 
   # xList - list of x points [nNode]
   # yList - list of y points [nNode]
