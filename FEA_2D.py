@@ -74,10 +74,11 @@ def get_color(val, min, max):
   return colorVal
 
 def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, colormap):
-  from matplotlib.pyplot import *
-  from matplotlib.cm import *
-  from matplotlib.colors import *
-  from numpy import *
+  from matplotlib import pyplot
+  from matplotlib import cm
+  from matplotlib import colors
+  from matplotlib import colorbar
+  from numpy import array
 
   # must be defined: 
   # xList - list of x points [nNode]
@@ -101,7 +102,7 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, colormap):
   factor = max(floor(rmax/(25*max(u))), 1)
   for i, x in enumerate(xList):
     y = yList[i]
-    annotate(i+1, (x+.01*rmax, y))
+    pyplot.annotate(i+1, (x+.01*rmax, y))
   for i, nodes in enumerate(conn):
     i1 = nodes[0]-1
     i2 = nodes[1]-1
@@ -113,7 +114,7 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, colormap):
     yi2 = yList[i2]
     yi3 = yList[i3]
   
-    line1,  = plot([xi1, xi2, xi3, xi1], [yi1, yi2, yi3, yi1], 'o-k')
+    line1,  = pyplot.plot([xi1, xi2, xi3, xi1], [yi1, yi2, yi3, yi1], 'o-k')
   for i, nodes in enumerate(conn):
     n1 = 2*nodes[0]-2
     n2 = 2*nodes[0]-1
@@ -137,20 +138,20 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, colormap):
     ydi2 = yList[i2] + u[n4]*factor
     ydi3 = yList[i3] + u[n6]*factor
     #X = Matrix([[xdi1, ydi1], [xdi2, ydi2], [xdi3, ydi3]])
-    cval = get_color(sigmaMax[i], min(sigmaMax), max(sigmaMax))
+    cval = cm.get_color(sigmaMax[i], min(sigmaMax), max(sigmaMax))
     #cval = get_color(stress_VM[i], min(stress_VM), max(stress_VM))
-    t1, = fill([xdi1, xdi2, xdi3], [ydi1, ydi2, ydi3], color = cval)
-  xlabel('x ['+lengthUnit+']')
-  ylabel('y ['+lengthUnit+']')
+    t1, = pyplot.fill([xdi1, xdi2, xdi3], [ydi1, ydi2, ydi3], color = cval)
+  pyplot.xlabel('x ['+lengthUnit+']')
+  pyplot.ylabel('y ['+lengthUnit+']')
   #legend([line1, line2], ['original', 'deformed x ' + str(factor)])
   #mshow(cmap='viridis')
-  text(min(xList)-.1*(dxmax), max(yList)+ (dymax)*.12, 'Deformation scaled by ' + str(int(factor)) + 'x', fontsize=8)
-  text(min(xList)+.35*(dxmax), max(yList)+ (dymax)*.12, 'Max stress = %8.3e ' % max(sigmaMax) + stressUnit, fontsize=8)
-  text(min(xList)+.8*(dxmax), max(yList)+ (dymax)*.12, 'Min stress = %8.3e ' % min(sigmaMax) + stressUnit, fontsize=8)
+  pyplot.text(min(xList)-.1*(dxmax), max(yList)+ (dymax)*.12, 'Deformation scaled by ' + str(int(factor)) + 'x', fontsize=8)
+  pyplot.text(min(xList)+.35*(dxmax), max(yList)+ (dymax)*.12, 'Max stress = %8.3e ' % max(sigmaMax) + stressUnit, fontsize=8)
+  pyplot.text(min(xList)+.8*(dxmax), max(yList)+ (dymax)*.12, 'Min stress = %8.3e ' % min(sigmaMax) + stressUnit, fontsize=8)
 
   nValues = arange(0, 30)
-  cnorm = Normalize(vmin = min(sigmaMax), vmax = max(sigmaMax))
-  scmap = ScalarMappable(norm=cnorm, cmap=colormap)
+  cnorm = colors.Normalize(vmin = min(sigmaMax), vmax = max(sigmaMax))
+  scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
   scmap.set_array(nValues)
-  cbar = colorbar(scmap)
+  cbar = cm.colorbar(scmap)
   cbar.set_label('Max element stress ['+stressUnit+']')
