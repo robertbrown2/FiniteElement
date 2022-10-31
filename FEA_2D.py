@@ -1,10 +1,10 @@
 from numpy import *
 
-def makeBMatrix_CST(x1, x2, x3, y1, y2, y3):
+def CST_J(x1, x2, x3, y1, y2, y3):
   # psi1 = 1 - xi - eta
   # psi2 = xi
   # psi3 = eta
-
+  
   dpsi1dxi = -1
   dpsi2dxi = 1
   dpsi3dxi = 0
@@ -24,6 +24,21 @@ def makeBMatrix_CST(x1, x2, x3, y1, y2, y3):
 
   J = array([[ dxdxi,  dydxi],
              [dxdeta, dydeta]])
+  return J
+
+def CST_B(x1, x2, x3, y1, y2, y3):
+  # psi1 = 1 - xi - eta
+  # psi2 = xi
+  # psi3 = eta
+
+  dpsi1dxi = -1
+  dpsi2dxi = 1
+  dpsi3dxi = 0
+  dpsi1deta = -1
+  dpsi2deta = 0
+  dpsi3deta = 1
+  
+  J = CST_J(x1, x2, x3, y1, y2, y3)
 
   Jinv = linalg.inv(J)
   # -----------------------------------
