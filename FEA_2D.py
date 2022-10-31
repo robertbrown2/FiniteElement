@@ -1,4 +1,9 @@
 def CST_J(x1, x2, x3, y1, y2, y3):
+  """
+  Defines the Jacobian for a Constant Strain Triangle element.
+  Usage: CST_J(x1, x2, x3, y1, y2, y3)
+  Returns a 2x2 array.
+  """
   from numpy import array
   # psi1 = 1 - xi - eta
   # psi2 = xi
@@ -26,6 +31,11 @@ def CST_J(x1, x2, x3, y1, y2, y3):
   return J
 
 def CST_B(x1, x2, x3, y1, y2, y3):
+  """
+  Defines the B Matrix for a Constant Strain Triangle element.
+  Usage: CST_B(x1, x2, x3, y1, y2, y3)
+  Returns a 3x6 array.
+  """
   from numpy import array, linalg
   # psi1 = 1 - xi - eta
   # psi2 = xi
@@ -63,8 +73,12 @@ def CST_B(x1, x2, x3, y1, y2, y3):
             ])
   return B
 
-
 def get_color(val, min, max, colormap):
+  """
+  Defines the element color based on a colormap.
+  Usage: get_color(val, min, max, colormap)
+  Returns a color for matplotlib.pyplot
+  """
   diff = max-min
   if (diff == 0):
     x = 0.5
@@ -73,7 +87,19 @@ def get_color(val, min, max, colormap):
   colorVal = colormap(float(x)) #scalarMap.to_rgba(x)
   return colorVal
 
-def CST_plot(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString):
+def CST_plot(xList, yList, conn, u, sigmaMax, stressUnit="", lengthUnit="", cmapString="jet"):
+  """
+  Plots a completed simulation using CST elements.
+  Usage: CST_plot(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString)
+  xList - list of x positions of nodes
+  yList - list of y positions of nodes
+  conn  - connectivity array or list of lists.  Each "row" should have three nodes.
+  u     - solution to FEA problem
+  sigmaMax - Maximum stress on each node (this will color each element)
+  stressUnit - Stress unit for display in plot.  Typically "Pa" or "psi".  Defaults to ""
+  lengthUnit - Length unit for display in plot.  Typically "m" or "in".  Defaults to ""
+  cmapString - Name of desired colormap.  Defaults to "jet"
+  """
   from matplotlib import pyplot
   from matplotlib import cm
   from matplotlib import colors
