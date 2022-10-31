@@ -79,7 +79,7 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, colormap):
   from matplotlib import colors
   from matplotlib import colorbar
   from matplotlib import figure
-  from numpy import array, sqrt
+  from numpy import array, sqrt, floor
 
   # must be defined: 
   # xList - list of x points [nNode]
