@@ -95,7 +95,7 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, colormap):
 
   # Set values for stressUnit, lengthUnit, and colormap if they are not defined
 
-  fig = figure(num=None, figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
+  fig = figure.figure(num=None, figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
 
   dxmax = max(xList)-min(xList)
   dymax = max(yList)-min(yList)
