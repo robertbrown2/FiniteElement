@@ -77,7 +77,7 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString)
   from matplotlib import pyplot
   from matplotlib import cm
   from matplotlib import colors
-  from matplotlib import colorbar
+  #from matplotlib import colorbar
   from matplotlib import figure
   from numpy import array, sqrt, floor, arange
 
@@ -155,5 +155,5 @@ def plot_2D(xList, yList, conn, u, sigmaMax, stressUnit, lengthUnit, cmapString)
   cnorm = colors.Normalize(vmin = min(sigmaMax), vmax = max(sigmaMax))
   scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
   scmap.set_array(nValues)
-  cbar = matplotlib.colorbar(scmap)
+  cbar = pyplot.colorbar(scmap)
   cbar.set_label('Max element stress ['+stressUnit+']')
