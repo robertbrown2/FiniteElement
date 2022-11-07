@@ -187,7 +187,7 @@ def Q4_B(x1234, y1234, xi, eta):
   ----------
   B: (3x8 array) - B matrix
   """
-  from numpy import array, linalg
+  from numpy import array, linalg, zeros
   # psi1 = (1 - xi)*(1 - eta)/4
   # psi2 = (1 + xi)*(1 - eta)/4
   # psi3 = (1 + xi)*(1 + eta)/4
