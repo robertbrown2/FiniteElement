@@ -310,10 +310,10 @@ def Q4_stiffness(x1234, y1234, xi, eta, D, thickness):
   B = Q4_B(x1234, y1234, xi, eta)
   return Q4_area(x1234, y1234)*thickness*(transpose(B)@D@B)
 
-def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=10, colormap='jet'):
+def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=10, 
+                  colormap='jet', undeformedLines=True, deformedLines=True, scaling=1.0):
   """
   Plot a single quadrilateral element.
-
   Usage - fig = Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=10, colormap='jet')
   ---------
     Input
@@ -330,15 +330,32 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
        'J' - determinant of Jacobian matrix
   Nplot - number of points to plot in contour
   colormap - (string) name of colormap
+  undeformedLines - (logical) if True, display undeformed lines
+  deformedLines - (logical) if True, display deformed lines
+  scaling - (float) Ratio of displayed deformation to actual deformation
   """
   from numpy import linalg, meshgrid, linspace, zeros, shape
   from matplotlib.pyplot import contourf
 
+  # Get deformed node locations
+  if (u != None):
+    xd = []
+    yd = []
+    for i, x in enumerate(x1234):
+      xd.append(x+scaling*u[2*i])
+    for i, y in enumerate(y1234):
+      yd.append(y+scaling*u[2*i+1])
+  else:
+    xd = x1234
+    yd = y1234
+
+  # Initialize meshgrid values
   [xi, eta] = meshgrid(linspace(-1, 1, Nplot), linspace(-1, 1, Nplot))
   Z = zeros(shape(xi))
   X = zeros(shape(xi))
   Y = zeros(shape(xi))
   
+  # Calculate plot values and locations
   for i in range(Nplot):
     for j in range(Nplot):
       if (output == 'J'):
@@ -348,16 +365,28 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
       else:
         print('Output type', output, ' not supported')
         raise Exception
-      [X[i,j], Y[i,j]] = Q4_map(x1234, y1234, xi[i,j], eta[i,j])
-  #contourf(xi, eta, Z)
+      [X[i,j], Y[i,j]] = Q4_map(xd, yd, xi[i,j], eta[i,j])
+  
+  # Plot things
+  if (undeformedLines):
+    x=x1234.copy()
+    x.append(x1234[0])
+    y=y1234.copy()
+    y.append(y1234[0])
+    plot(x, y, 'k--')
+  if (deformedLines):
+    x=xd.copy()
+    x.append(xd[0])
+    y=yd.copy()
+    y.append(yd[0])
+    plot(x, y, 'k')
+
   if (minMax == None):
-    contourf(X, Y, Z, cmap=colormap)
+    return contourf(X, Y, Z, cmap=colormap)
   else:
-    try:
-      lenMinMax = len(minMax)
-      if lenMinMax != 2:
-        raise Exception
-    except:
+    
+    lenMinMax = len(minMax)
+    if lenMinMax != 2:
       print('Warning: minMax (in C4_plot) should be a list of two values')
 
     return contourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
