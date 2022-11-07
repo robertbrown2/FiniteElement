@@ -260,7 +260,7 @@ def Q4_stress(x1234, y1234, u, xi, eta, D, type2D='PlaneStress', output='VM'):
   ----------
   sigma: (float) stress of requested type
   """
-  from numpy import array
+  from numpy import array, sqrt
 
   eps = array(Q4_strain(x1234, y1234, u, xi, eta))
   sigxy = D @ eps
