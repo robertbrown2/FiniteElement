@@ -343,6 +343,8 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
     for j in range(Nplot):
       if (output == 'J'):
         Z[i,j] = linalg.det(Q4_J(x1234, y1234, xi[i,j], eta[i,j]))
+      elif (output == 'VM'):
+        Z[i,j] = Q4_stress(x1234, y1234, u, xi[i,j], eta[i,j], D, type2D='PlaneStress', output='VM')
       else:
         print('Output type', output, ' not supported')
         raise Exception
