@@ -360,4 +360,4 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
     except:
       print('Warning: minMax (in C4_plot) should be a list of two values')
 
-    return contourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1])
+    return contourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
