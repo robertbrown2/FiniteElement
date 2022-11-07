@@ -335,7 +335,7 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
   scaling - (float) Ratio of displayed deformation to actual deformation
   """
   from numpy import linalg, meshgrid, linspace, zeros, shape
-  from matplotlib.pyplot import contourf
+  from matplotlib.pyplot import contourf, plot
 
   # Get deformed node locations
   if (u != None):
