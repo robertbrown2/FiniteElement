@@ -331,7 +331,7 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
   Nplot - number of points to plot in contour
   colormap - (string) name of colormap
   """
-  from numpy import linalg, meshgrid, linspace, zeros
+  from numpy import linalg, meshgrid, linspace, zeros, shape
   from matplotlib.pyplot import contourf
 
   [xi, eta] = meshgrid(linspace(-1, 1, Nplot), linspace(-1, 1, Nplot))
