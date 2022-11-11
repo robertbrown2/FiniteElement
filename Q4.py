@@ -425,11 +425,22 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
   from matplotlib import colors
   #from matplotlib import colorbar
   from matplotlib import figure
+  from numpy import rMax
   
   if (len(u) < 2):
     deformedLines=False
   if (minMax == None):
     calcMinMax = True
+  
+  # Determine Scaling value
+  if (len(u) < 2):
+    scaling = 1.0
+  else:
+    dxMax = max(xnode) - min(xnode)
+    dyMax = max(ynode) - min(ynode)
+    rMax = sqrt(dxMax**2 + dyMax**2)
+    uMax = max(max(u), abs(min(u)))
+    scaling = max(floor(rmax/(25*uMax)), 1)
   
   if (calcMinMax):
     for nodes in conn:
