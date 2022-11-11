@@ -438,7 +438,7 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
       y1234 = [ynode[nodes[0]-1], ynode[nodes[1]-1], ynode[nodes[2]-1], ynode[nodes[3]-1]]
     
       # Define deformation vector for local element
-      if (u==None):
+      if (len(u) < 2):
         uElem = None
       else:
         uElem = []
@@ -466,7 +466,7 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
     y1234 = [ynode[nodes[0]-1], ynode[nodes[1]-1], ynode[nodes[2]-1], ynode[nodes[3]-1]]
   
     # Define deformation vector for local element
-    if (u==None):
+    if (len(u) < 2):
       uElem = None
     else:
       uElem = []
