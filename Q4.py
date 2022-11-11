@@ -390,3 +390,85 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
       print('Warning: minMax (in C4_plot) should be a list of two values')
 
     return contourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
+
+
+def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, Nplot=10, 
+                  colormap='jet', undeformedLines=True, deformedLines=True)
+  """
+  Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
+  Usage (Jacobian) - plotAll(conn, xnode, ynode)
+  Usage (Solution) - plotAll(conn, xnode, ynode, u, D, type2D="planeStress", output="J")
+  
+  ---------
+    Input
+  ---------
+  conn - (list of lists) connectivity matrix - [[n1, n2, n3, n4], [n5, n6, n7, n8], ...]
+  xnode - (list) x locations of nodes
+  ynode - (list) y locations of nodes
+  u - (list) deformation of nodes [u1, v2, u2, v2, u3, v3, u4, v4, ...]
+  D - (array) constituitive matrix - should match type2D
+  type2D - (string) "planeStress", "planeStrain", or "axisymmetric"
+  minMax - (list) min and max value of output plot - omit to have min/max automatically calculated
+  output - (string) Plot type:
+      'VM' - von Mises stress
+      'sigx', 'sigy', or 'tauxy' - normal stress in x or y, or shear stress
+      'sig1' or 'sig2' - maximum or minimum principal stress
+       'J' - determinant of Jacobian matrix
+  Nplot - number of points to plot in contour
+  colormap - (string) name of colormap
+  undeformedLines - (logical) if True, display undeformed lines
+  deformedLines - (logical) if True, display deformed lines - set to False if u is not given
+  scaling - (float) Ratio of displayed deformation to actual deformation - choose None for automatic scaling
+  """
+  if (u == None):
+    deformedLines=False
+  if (minMax == None):
+    calcMinMax = True
+  
+  if (calcMinMax):
+    for nodes in conn:
+      # Find the x and y position of nodes for the local element
+      x1234 = [xnode[nodes[0]-1], xnode[nodes[1]-1], xnode[nodes[2]-1], xnode[nodes[3]-1]] 
+      y1234 = [ynode[nodes[0]-1], ynode[nodes[1]-1], ynode[nodes[2]-1], ynode[nodes[3]-1]]
+    
+      # Define deformation vector for local element
+      if (u==None):
+        uElem = None
+      else:
+        uElem = []
+        for node in nodes:
+          uElem.append(u[node*2-2])
+          uElem.append(u[node*2-1])
+    
+      # Calculate the stress at the nodes of the local element
+      sigA = Q4_stress(x1234, y1234, u, -1, -1, D, type2D, output)
+      sigB = Q4_stress(x1234, y1234, u,  1, -1, D, type2D, output)
+      sigC = Q4_stress(x1234, y1234, u,  1,  1, D, type2D, output)
+      sigD = Q4_stress(x1234, y1234, u, -1,  1, D, type2D, output)
+      if (minMax == None):
+        minMax[0] = min(sigA, sigB, sigC, sigD)
+        minMax[1] = max(sigA, sigB, sigC, sigD)
+      else:
+        minMax[0] = min(sigA, sigB, sigC, sigD, minMax[0])
+        minMax[1] = max(sigA, sigB, sigC, sigD, minMax[1])
+  
+  fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
+  
+  for nodes in conn:
+    # Find the x and y position of nodes for the local element
+    x1234 = [xnode[nodes[0]-1], xnode[nodes[1]-1], xnode[nodes[2]-1], xnode[nodes[3]-1]] 
+    y1234 = [ynode[nodes[0]-1], ynode[nodes[1]-1], ynode[nodes[2]-1], ynode[nodes[3]-1]]
+  
+    # Define deformation vector for local element
+    if (u==None):
+      uElem = None
+    else:
+      uElem = []
+      for node in nodes:
+        uElem.append(u[node*2-2])
+        uElem.append(u[node*2-1])
+          
+    Q4_plotSingle(x1234, y1234, uElem, D, minMax, output, Nplot, 
+                  colormap, undeformedLines, deformedLines, scaling)
+  
+  
