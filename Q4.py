@@ -393,7 +393,7 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
 
 
 def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, Nplot=10, 
-                  colormap='jet', undeformedLines=True, deformedLines=True)
+                  colormap='jet', undeformedLines=True, deformedLines=True):
   """
   Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
   Usage (Jacobian) - plotAll(conn, xnode, ynode)
