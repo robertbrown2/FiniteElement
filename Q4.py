@@ -488,5 +488,12 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
           
     Q4_plotSingle(x1234, y1234, uElem, D, minMax, output, Nplot, 
                   colormap, undeformedLines, deformedLines, scaling)
-  
+    pyplot.xlabel('x')
+    pyplot.ylabel('y')
+    
+    nValues = arange(0, 30)
+    cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
+    scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
+    scmap.set_array(nValues)
+    cbar = pyplot.colorbar(scmap)
   
