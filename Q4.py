@@ -447,10 +447,10 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
           uElem.append(u[node*2-1])
     
       # Calculate the stress at the nodes of the local element
-      sigA = Q4_stress(x1234, y1234, u, -1, -1, D, type2D, output)
-      sigB = Q4_stress(x1234, y1234, u,  1, -1, D, type2D, output)
-      sigC = Q4_stress(x1234, y1234, u,  1,  1, D, type2D, output)
-      sigD = Q4_stress(x1234, y1234, u, -1,  1, D, type2D, output)
+      sigA = Q4_stress(x1234, y1234, uElem, -1, -1, D, type2D, output)
+      sigB = Q4_stress(x1234, y1234, uElem,  1, -1, D, type2D, output)
+      sigC = Q4_stress(x1234, y1234, uElem,  1,  1, D, type2D, output)
+      sigD = Q4_stress(x1234, y1234, uElem, -1,  1, D, type2D, output)
       if (minMax == None):
         minMax[0] = min(sigA, sigB, sigC, sigD)
         minMax[1] = max(sigA, sigB, sigC, sigD)
