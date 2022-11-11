@@ -426,7 +426,7 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
   #from matplotlib import colorbar
   from matplotlib import figure
   
-  if (u == None):
+  if (len(u) < 2):
     deformedLines=False
   if (minMax == None):
     calcMinMax = True
