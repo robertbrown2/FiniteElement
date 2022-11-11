@@ -491,7 +491,7 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
   pyplot.xlabel('x')
   pyplot.ylabel('y')
   if (output != 'J'):
-    pyplot.text(min(xnode) - .15*(dxMax), min(ynode) - (dyMax)*.12, 'Deformation scaled by ' + str(int(factor)) + 'x', fontsize=8)
+    pyplot.text(min(xnode) - .15*(dxMax), min(ynode) - (dyMax)*.12, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
     pyplot.text(min(xnode) + .35*(dxMax), min(ynode) - (dyMax)*.12, 'Max stress = %8.3e ' % minMax[0], fontsize=8)
     pyplot.text(min(xnode) + .85*(dxMax), min(ynode) - (dyMax)*.12, 'Min stress = %8.3e ' % minMax[1], fontsize=8)
   
