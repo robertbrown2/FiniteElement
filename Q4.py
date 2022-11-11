@@ -499,17 +499,17 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
   cbar = pyplot.colorbar(scmap)
   
   # Label colorbar
-  if (output = 'VM'):
+  if (output == 'VM'):
     cbar.set_label('Von Mises stress')
-  elif (output = 'J'):
+  elif (output == 'J'):
     cbar.set_label('Determinant of Jacobian')
-  elif (output = 'sigx'):
+  elif (output == 'sigx'):
     cbar.set_label('Normal stress - x')
-  elif (output = 'sigy'):
+  elif (output == 'sigy'):
     cbar.set_label('Normal stress - y')
-  elif (output = 'tauxy'):
+  elif (output == 'tauxy'):
     cbar.set_label('Shear stress - xy')
-  elif (output = 'sig1'):
+  elif (output == 'sig1'):
     cbar.set_label('Max normal stress')
-  elif (output = 'sig2'):
+  elif (output == 'sig2'):
     cbar.set_label('Min normal stress')
