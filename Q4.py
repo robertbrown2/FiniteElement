@@ -435,7 +435,7 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
   # Determine Scaling value
   if (len(u) < 2):
     scaling = 1.0
-  else:
+  elif (scaling == None):
     dxMax = max(xnode) - min(xnode)
     dyMax = max(ynode) - min(ynode)
     rMax = sqrt(dxMax**2 + dyMax**2)
