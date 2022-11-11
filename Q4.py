@@ -425,7 +425,7 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
   from matplotlib import colors
   #from matplotlib import colorbar
   from matplotlib import figure
-  from numpy import sqrt, floor
+  from numpy import sqrt, floor, arange
   
   if (len(u) < 2):
     deformedLines=False
