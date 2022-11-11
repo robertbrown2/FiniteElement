@@ -498,8 +498,8 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
     
     # Find bounds of plot to help place text
     for i, x in enumerate(xnode):
-      xd = xnode[i] + u[2*i-2]*scaling
-      yd = ynode[i] + u[2*i-1]*scaling
+      xd = xnode[i] + u[2*i]*scaling
+      yd = ynode[i] + u[2*i+1]*scaling
       xMax = max(xMax, xd, xnode[i])
       xMin = min(xMin, xd, xnode[i])
       yMax = max(yMax, yd, ynode[i])
