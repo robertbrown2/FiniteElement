@@ -491,9 +491,20 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
   pyplot.xlabel('x')
   pyplot.ylabel('y')
   if (output != 'J'):
-    pyplot.text(min(xnode) - .15*(dxMax), min(ynode) - (dyMax)*.12, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
-    pyplot.text(min(xnode) + .35*(dxMax), min(ynode) - (dyMax)*.12, 'Max stress = %8.3e ' % minMax[0], fontsize=8)
-    pyplot.text(min(xnode) + .85*(dxMax), min(ynode) - (dyMax)*.12, 'Min stress = %8.3e ' % minMax[1], fontsize=8)
+    xMax = xnode[0]
+    xMin = xnode[0]
+    yMax = ynode[0]
+    yMin = ynode[0]
+    for i, x in xnode:
+      xd = xnode[i] + u[2*i-2]*scaling
+      yd = ynode[i] + u[2*i-1]*scaling
+      xMax = max(xMax, xd, xnode[i])
+      xMin = min(xMin, xd, xnode[i])
+      yMax = max(yMax, yd, ynode[i])
+      yMin = min(yMin, yd, ynode[i])
+    pyplot.text(xMax - .15*(dxMax), yMin - (dyMax)*.12, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
+    pyplot.text(xMax + .35*(dxMax), yMin - (dyMax)*.12, 'Max stress = %8.3e ' % minMax[0], fontsize=8)
+    pyplot.text(xMax + .85*(dxMax), yMin - (dyMax)*.12, 'Min stress = %8.3e ' % minMax[1], fontsize=8)
   
   # Create colorbar
   nValues = arange(0, 30)
