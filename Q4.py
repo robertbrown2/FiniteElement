@@ -420,6 +420,12 @@ def Q4_plotAll(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output=
   deformedLines - (logical) if True, display deformed lines - set to False if u is not given
   scaling - (float) Ratio of displayed deformation to actual deformation - choose None for automatic scaling
   """
+  from matplotlib import pyplot
+  from matplotlib import cm
+  from matplotlib import colors
+  #from matplotlib import colorbar
+  from matplotlib import figure
+  
   if (u == None):
     deformedLines=False
   if (minMax == None):
