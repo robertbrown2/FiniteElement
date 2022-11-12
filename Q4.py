@@ -221,7 +221,7 @@ def Q4_B(x1234, y1234, xi, eta, type2D='planeStress'):
 
   return array(B)
 
-def Q4_strain(x1234, y1234, u, xi, eta, type2D):
+def Q4_strain(x1234, y1234, u, xi, eta, type2D, output==None):
   from numpy import array
   """
   Output the strain at a point in the quadrilateral.
@@ -245,7 +245,18 @@ def Q4_strain(x1234, y1234, u, xi, eta, type2D):
   """
 
   B = Q4_B(x1234, y1234, xi, eta, type2D)
-  return B @ array(u)
+  eps = B @ array(u)
+  if (output == None):
+    return eps
+  elif (output == 'epsx'):
+    return eps[0]
+  elif (output == 'epsy'):
+    return eps[1]
+  elif (output == 'gammaxy'):
+    return eps[2]
+  else:
+    print('Error in Q4_strain: output not recognized')
+    raise Exception
   
 def Q4_stress(x1234, y1234, u, xi, eta, D, type2D='PlaneStress', output='VM'):
   """
@@ -481,10 +492,16 @@ def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J"
           uElem.append(u[node*2-1])
     
       # Calculate the stress at the nodes of the local element
-      sigA = Q4_stress(x1234, y1234, uElem, -1, -1, D, type2D, output)
-      sigB = Q4_stress(x1234, y1234, uElem,  1, -1, D, type2D, output)
-      sigC = Q4_stress(x1234, y1234, uElem,  1,  1, D, type2D, output)
-      sigD = Q4_stress(x1234, y1234, uElem, -1,  1, D, type2D, output)
+      if (output[0] == 's'):
+        sigA = Q4_stress(x1234, y1234, uElem, -1, -1, D, type2D, output)
+        sigB = Q4_stress(x1234, y1234, uElem,  1, -1, D, type2D, output)
+        sigC = Q4_stress(x1234, y1234, uElem,  1,  1, D, type2D, output)
+        sigD = Q4_stress(x1234, y1234, uElem, -1,  1, D, type2D, output)
+      else:
+        sigA = Q4_strain(x1234, y1234, uElem, -1, -1, type2D, output)
+        sigB = Q4_strain(x1234, y1234, uElem,  1, -1, type2D, output)
+        sigC = Q4_strain(x1234, y1234, uElem,  1,  1, type2D, output)
+        sigD = Q4_strain(x1234, y1234, uElem, -1,  1, type2D, output)
       if (minMax == None):
         minMax=[0, 0]
         minMax[0] = min(sigA, sigB, sigC, sigD)
