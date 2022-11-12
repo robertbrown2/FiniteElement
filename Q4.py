@@ -221,7 +221,7 @@ def Q4_B(x1234, y1234, xi, eta, type2D='planeStress'):
 
   return array(B)
 
-def Q4_strain(x1234, y1234, u, xi, eta, type2D, output==None):
+def Q4_strain(x1234, y1234, u, xi, eta, type2D, output=None):
   from numpy import array
   """
   Output the strain at a point in the quadrilateral.
