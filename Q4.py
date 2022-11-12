@@ -31,8 +31,15 @@ def constMatrix(E, nu, type2D):
           [nu, 1-nu, 0],
           [0, 0, (1-2*nu)/2]
           ])
+  elif (type2D == 'axisymmetric'):
+    D = E / ((1 + nu)*(1 - 2*nu)) * array([
+                             [1-nu, nu, nu, 0],
+                             [nu, 1-nu, nu, 0],
+                             [nu, nu, 1-nu, 0],
+                             [0, 0, 0, (1-2*nu)/2]
+                            ])
   else:
-    print('type2D must be either "planeStress" or "planeStrain", was instead: ', type2D)
+    print('type2D must be "planeStress", "planeStrain", or "axisymmetric".  Was instead: ', type2D)
     raise Exception
 
   return D
@@ -162,7 +169,7 @@ def Q4_J(x1234, y1234, xi, eta):
              [dxdeta, dydeta]])
   return J
 
-def Q4_B(x1234, y1234, xi, eta):
+def Q4_B(x1234, y1234, xi, eta, type2D='planeStress'):
   """
   Find the B Matrix for a quadrilateral element with four nodes.
   B = Q4_B(x1234, y1234, xi, eta)
@@ -188,28 +195,33 @@ def Q4_B(x1234, y1234, xi, eta):
   B: (3x8 array) - B matrix
   """
   from numpy import array, linalg, zeros
-  # psi1 = (1 - xi)*(1 - eta)/4
-  # psi2 = (1 + xi)*(1 - eta)/4
-  # psi3 = (1 + xi)*(1 + eta)/4
-  # psi4 = (1 - xi)*(1 + eta)/4
   
   [dpsidxi, dpsideta] = Q4_shapeDerivatives(xi, eta)
 
   Jinv = linalg.inv(Q4_J(x1234, y1234, xi, eta))
 
-  dpsidx = [0]*4
-  dpsidy = [0]*4
-  B = zeros((3, 8))
-  for i in range(4):
-    dpsidxy = Jinv @ array([dpsidxi[i], dpsideta[i]])
-    B[0, 2*i  ] = dpsidxy[0]
-    B[1, 2*i+1] = dpsidxy[1]
-    B[2, 2*i  ] = dpsidxy[1]
-    B[2, 2*i+1] = dpsidxy[0]
+  if (type2D == 'axisymmetric'):
+    psi = Q4_shapeFunctions(xi, eta)
+    B = zeros((4, 8))
+    for i in range(4):
+      dpsidxy = Jinv @ array([dpsidxi[i], dpsideta[i]])
+      B[0, 2*i  ] = dpsidxy[0]
+      B[1, 2*i+1] = dpsidxy[1]
+      B[2, 2*i  ] = psi[i] / (array(x1234) @ array(psi))
+      B[3, 2*i  ] = dpsidxy[1]
+      B[3, 2*i+1] = dpsidxy[0]
+  else:
+    B = zeros((3, 8))
+    for i in range(4):
+      dpsidxy = Jinv @ array([dpsidxi[i], dpsideta[i]])
+      B[0, 2*i  ] = dpsidxy[0]
+      B[1, 2*i+1] = dpsidxy[1]
+      B[2, 2*i  ] = dpsidxy[1]
+      B[2, 2*i+1] = dpsidxy[0]
 
   return array(B)
 
-def Q4_strain(x1234, y1234, u, xi, eta):
+def Q4_strain(x1234, y1234, u, xi, eta, type2D):
   from numpy import array
   """
   Output the strain at a point in the quadrilateral.
@@ -232,7 +244,7 @@ def Q4_strain(x1234, y1234, u, xi, eta):
   tauxy: (float) shear strain
   """
 
-  B = Q4_B(x1234, y1234, xi, eta)
+  B = Q4_B(x1234, y1234, xi, eta, type2D)
   return B @ array(u)
   
 def Q4_stress(x1234, y1234, u, xi, eta, D, type2D='PlaneStress', output='VM'):
@@ -262,7 +274,7 @@ def Q4_stress(x1234, y1234, u, xi, eta, D, type2D='PlaneStress', output='VM'):
   """
   from numpy import array, sqrt
 
-  eps = array(Q4_strain(x1234, y1234, u, xi, eta))
+  eps = array(Q4_strain(x1234, y1234, u, xi, eta, type2D))
   sigxy = D @ eps
   if (output == 'sigx'):
     return sigxy[0]
@@ -290,7 +302,7 @@ def Q4_stress(x1234, y1234, u, xi, eta, D, type2D='PlaneStress', output='VM'):
       print('Variable output in Q4_stress must be sigx, sigy, tauxy, sig1, sig2, or VM')
       raise Exception
 
-def Q4_stiffness(x1234, y1234, xi, eta, D, thickness):
+def Q4_stiffness(x1234, y1234, xi, eta, D, thickness=None, type2D='planeStress'):
   """
   Calculate the stiffness matrix for a Q4 element
 
@@ -307,11 +319,14 @@ def Q4_stiffness(x1234, y1234, xi, eta, D, thickness):
   thickness - (float) thickness of element in third dimension
   """
   from numpy import array
-  B = Q4_B(x1234, y1234, xi, eta)
+  B = Q4_B(x1234, y1234, xi, eta, type2D)
+  if (type2D == 'axisymmetric'):
+    psi = Q4_shapeFunctions(xi, eta)
+    thickness = 2*pi*(array(x1234) @ array(psi))
   return Q4_area(x1234, y1234)*thickness*(transpose(B)@D@B)
 
 def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=10, 
-                  colormap='jet', undeformedLines=True, deformedLines=True, scaling=1.0):
+                  colormap='jet', undeformedLines=True, deformedLines=True, scaling=1.0, type2D="planeStress"):
   """
   Plot a single quadrilateral element.
   Usage - fig = Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=10, colormap='jet')
@@ -361,7 +376,15 @@ def Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=
       if (output == 'J'):
         Z[i,j] = linalg.det(Q4_J(x1234, y1234, xi[i,j], eta[i,j]))
       elif (output == 'VM' or output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2'):
-        Z[i,j] = Q4_stress(x1234, y1234, u, xi[i,j], eta[i,j], D, type2D='PlaneStress', output=output)
+        Z[i,j] = Q4_stress(x1234, y1234, u, xi[i,j], eta[i,j], D, type2D=type2D, output=output)
+      elif (output == 'epsx' or output == 'epsy' or output == 'gammaxy'):
+        eps = Q4_strain(x1234, y1234, u, xi[i,j], eta[i,j], type2D=type2D)
+        if (output == 'epsx'):
+          Z[i,j] = eps[0]
+        elif (output == 'epsy'):
+          Z[i,j] = eps[1]
+        else:
+          Z[i,j] = eps[2]
       else:
         print('Output type', output, ' not supported')
         raise Exception
@@ -487,7 +510,7 @@ def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J"
         uElem.append(u[node*2-1])
           
     Q4_plotSingle(x1234, y1234, uElem, D, minMax, output, Nplot, 
-                  colormap, undeformedLines, deformedLines, scaling)
+                  colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
   #pyplot.xlabel('x')
   #pyplot.ylabel('y')
   if (output != 'J'):
