@@ -1,48 +1,3 @@
-def constMatrix(E, nu, type2D):
-  """
-  Create the constituitive matrix for a 2D solid.
-
-  Usage - D = constMatrix(E, nu, type2D)
-
-  ---------
-    Input
-  ---------
-  E: (float) - Young's modulus of material
-  nu: (float) - Poisson's ratio of material
-  type2D: (string) - assumption for 2D solid
-          'planeStress' - stress in z direction is zero (thin plates)
-          'planeStrain' - strain in z direction is zero (thick bodies)
-
-  ----------
-    Output
-  ----------
-  D: (array) - constituitve matrix
-  """
-
-  if (type2D == 'planeStress'):
-    D = E / (1 - nu**2) * array([
-                             [1, nu, 0],
-                             [nu, 1, 0],
-                             [0, 0, (1-nu)/2]
-                            ])
-  elif (type2D == 'planeStrain'):
-    D = E / ((1 + nu)*(1 - 2*nu)) * array([
-          [1-nu, nu, 0 ],
-          [nu, 1-nu, 0],
-          [0, 0, (1-2*nu)/2]
-          ])
-  elif (type2D == 'axisymmetric'):
-    D = E / ((1 + nu)*(1 - 2*nu)) * array([
-                             [1-nu, nu, nu, 0],
-                             [nu, 1-nu, nu, 0],
-                             [nu, nu, 1-nu, 0],
-                             [0, 0, 0, (1-2*nu)/2]
-                            ])
-  else:
-    print('type2D must be "planeStress", "planeStrain", or "axisymmetric".  Was instead: ', type2D)
-    raise Exception
-
-  return D
 
 def LST_midpoints(x123, y123):
   xbar = sum(x123)/3
@@ -99,18 +54,15 @@ def LST_shapeDerivatives(xi, eta):
 
   return [dpsidxi, dpsideta]
 
-def LST_map(x123, y123, xi, eta):
+def LST_map(xElem, yElem, xi, eta):
   """
   Get the x and y location associated with xi and eta.  Primarily an internal 
   function for Q4_plot and Q4_plotSingle.
   """
-  if (len(x123) == 3:
+  if (len(xElem) == 3:
     [x456, y456] = LST_midpoints(x123, y123)
-    xnodes = x123 + x456
-    ynodes = y123 + y456
-  else:
-    xnodes = x123
-    ynodes = y123
+    xElem = xElem + x456
+    yElem = yElem + y456
   
   psi = LST_shapeFunctions(xi, eta)
   
@@ -118,21 +70,21 @@ def LST_map(x123, y123, xi, eta):
   y = 0
   
   for i, p in enumerate(psi):
-    x += p*xnodes[i]
-    y += p*ynodes[i]
+    x += p*xElem[i]
+    y += p*yElem[i]
   
   return([x,y])
 
-def LST_area(x123, y123):
+def LST_area(xElem, yElem):
   """
   Find the area of a triangle.
-  A = Q4_area(x1234, y1234)
+  A = Q4_area(xElem, yElem)
   
   ---------
     Input
   ---------
-  x1234: (list) - x values of nodes
-  y1234: (list) - y values of nodes
+  xElem: (list) - x values of nodes
+  yElem: (list) - y values of nodes
 
   ----------
     Output
@@ -140,10 +92,10 @@ def LST_area(x123, y123):
   Area: (float) - area of quad
   """
 
-  dx1 = x123[1] - x123[0]
-  dx2 = x123[2] - x123[0]
-  dy1 = y123[1] - y123[0]
-  dy2 = y123[2] - y123[0]
+  dx1 = xElem[1] - xElem[0]
+  dx2 = xElem[2] - xElem[0]
+  dy1 = yElem[1] - yElem[0]
+  dy2 = yElem[2] - yElem[0]
 
   # area is 1/2 of cross product of [dx1, dy1] and [dx2, dy2]
 
@@ -153,10 +105,10 @@ def LST_area(x123, y123):
 
   return 0.5 * (dx1*dy2 - dy1*dx2)
 
-def LST_J(x123, y123, xi, eta):
+def LST_J(xElem, yElem, xi, eta):
   """
   Find the Jacobian for a triangular element with six nodes.
-  J = Q4_J(x123, y123, xi, eta)
+  J = LST_J(xElem, yElem, xi, eta)
 
   3
   | \
@@ -168,8 +120,8 @@ def LST_J(x123, y123, xi, eta):
   ---------
     Input
   ---------
-  x123: (list) - x values of nodes
-  y123: (list) - y values of nodes
+  xElem: (list) - x values of nodes
+  yElem: (list) - y values of nodes
   xi: (float) - location at which to calculate Jacobian
   eta: (float) - location at which to calculate Jacobian
 
@@ -186,29 +138,26 @@ def LST_J(x123, y123, xi, eta):
   #      [dx/deta, dy/deta]]
 
   # x = x1 * psi1 + x2 * psi2 + x3 * psi3 + x4 * psi4
-  [x456, y456] = LST_midpoints(x123, y123)
-  xnodes = x123 + x456
-  ynodes = y123 + y456
   
-  dxdxi  =  array(xnodes) @ array(dpsidxi)
-  dxdeta =  array(xnodes) @ array(dpsideta)
-  dydxi  =  array(ynodes) @ array(dpsidxi)
-  dydeta =  array(ynodes) @ array(dpsideta)
+  dxdxi  =  array(xElem) @ array(dpsidxi)
+  dxdeta =  array(xElem) @ array(dpsideta)
+  dydxi  =  array(yElem) @ array(dpsidxi)
+  dydeta =  array(yElem) @ array(dpsideta)
 
   J = array([[ dxdxi,  dydxi],
              [dxdeta, dydeta]])
   return J
 
-def LST_B(x123, y123, xi, eta, type2D='planeStress'):
+def LST_B(xElem, yElem, xi, eta, type2D='planeStress'):
   """
   Find the B Matrix for a triangular element with six nodes.
-  B = Q4_B(x123, y123, xi, eta, type2D)
+  B = Q4_B(xElem, yElem, xi, eta, type2D)
 
   ---------
     Input
   ---------
-  x123: (list) - x values of nodes
-  y123: (list) - y values of nodes
+  xElem: (list) - x values of nodes
+  yElem: (list) - y values of nodes
   xi: (float) - location at which to calculate B matrix
   eta: (float) - location at which to calculate B matrix
 
@@ -221,11 +170,7 @@ def LST_B(x123, y123, xi, eta, type2D='planeStress'):
   
   [dpsidxi, dpsideta] = LST_shapeDerivatives(xi, eta)
 
-  
-  [x456, y456] = LST_midpoints(x123, y123)
-  xnodes = x123 + x456
-  ynodes = y123 + y456
-  Jinv = linalg.inv(LST_J(xnodes, ynodes, xi, eta))
+  Jinv = linalg.inv(LST_J(xElem, yElem, xi, eta))
   
   if (type2D == 'axisymmetric'):
     psi = LST_shapeFunctions(xi, eta)
@@ -234,7 +179,7 @@ def LST_B(x123, y123, xi, eta, type2D='planeStress'):
       dpsidxy = Jinv @ array([dpsidxi[i], dpsideta[i]])
       B[0, 2*i  ] = dpsidxy[0]
       B[1, 2*i+1] = dpsidxy[1]
-      B[2, 2*i  ] = psi[i] / (array(xnodes) @ array(psi))
+      B[2, 2*i  ] = psi[i] / (array(xElem) @ array(psi))
       B[3, 2*i  ] = dpsidxy[1]
       B[3, 2*i+1] = dpsidxy[0]
   else:
@@ -248,17 +193,17 @@ def LST_B(x123, y123, xi, eta, type2D='planeStress'):
 
   return array(B)
 
-def LST_strain(x123, y123, u, xi, eta, type2D, output=None):
+def LST_strain(xElem, yElem, u, xi, eta, type2D='planeStress', output=None):
   from numpy import array
   """
   Output the strain at a point in the triangle.
 
-  Usage: eps = array([epsx, epsy, tauxy]) = LST_strain(x123, y123, u, xi, eta)
+  Usage: eps = array([epsx, epsy, tauxy]) = LST_strain(xElem, yElem, u, xi, eta, type2D='planeStress', output=None)
   ---------
     Input
   ---------
-  x123 - (list) x locations of nodes
-  y123 - (list) y locations of nodes
+  xElem - (list) x locations of nodes
+  yElem - (list) y locations of nodes
   u - (list) deformation of nodes [u1, v2, u2, v2, u3, v3, u4, v4, u5, v5, u6, v6]
   xi, eta - (float) location on unmapped element
 
@@ -271,7 +216,7 @@ def LST_strain(x123, y123, u, xi, eta, type2D, output=None):
   tauxy: (float) shear strain
   """
 
-  B = LST_B(x123, y123, xi, eta, type2D)
+  B = LST_B(xElem, yElem, xi, eta, type2D)
   eps = B @ array(u)
   if (output == None):
     return eps
@@ -285,16 +230,16 @@ def LST_strain(x123, y123, u, xi, eta, type2D, output=None):
     print('Error in Q4_strain: output not recognized')
     raise Exception
   
-def LST_stress(x123, y123, u, xi, eta, D, type2D='PlaneStress', output='VM'):
+def LST_stress(xElem, yElem, u, xi, eta, D, type2D='PlaneStress', output='VM'):
   """
   Calculate the stress on an element at the unmapped location (xi, eta).
 
-  Usage - sigma = LST_stress(x123, y123, u=None, xi, eta, D, output='VM')
+  Usage - sigma = LST_stress(xElem, yElem, u=None, xi, eta, D, type2D = 'PlaneStress', output='VM')
   ---------
     Input
   ---------
-  x123 - (list) x locations of nodes
-  y123 - (list) y locations of nodes
+  xElem - (list) x locations of nodes
+  yElem - (list) y locations of nodes
   u - (list) deformation of nodes [u1, v2, u2, v2, u3, v3, u4, v4]
   xi - (float) position in unmapped element
   eta - (float) position in unmapped element
@@ -312,7 +257,7 @@ def LST_stress(x123, y123, u, xi, eta, D, type2D='PlaneStress', output='VM'):
   """
   from numpy import array, sqrt
 
-  eps = array(LST_strain(x123, y123, u, xi, eta, type2D))
+  eps = array(LST_strain(xElem, yElem, u, xi, eta, type2D))
   sigxy = D @ eps
   if (output == 'sigx'):
     return sigxy[0]
@@ -340,40 +285,40 @@ def LST_stress(x123, y123, u, xi, eta, D, type2D='PlaneStress', output='VM'):
       print('Variable output in Q4_stress must be sigx, sigy, tauxy, sig1, sig2, or VM')
       raise Exception
 
-def LST_stiffness(x123, y123, xi, eta, D, thickness=None, type2D='planeStress'):
+def LST_stiffness(xElem, yElem, xi, eta, D, thickness=None, type2D='planeStress'):
   """
   Calculate the stiffness matrix for a Q4 element
 
-  Usage - K = Q4_stiffness(x123, y123, xi, eta, D, thickness)
+  Usage - K = Q4_stiffness(xElem, yElem, xi, eta, D, thickness)
 
   ---------
     Input
   ---------
-  x123 - (list) x locations of nodes
-  y123 - (list) y locations of nodes
+  xElem - (list) x locations of nodes
+  yElem - (list) y locations of nodes
   xi - (float) position in unmapped element
   eta - (float) position in unmapped element
   D - (array) constituitive matrix
   thickness - (float) thickness of element in third dimension
   """
   from numpy import array
-  B = LST_B(x123, y123, xi, eta, type2D)
+  B = LST_B(xElem, yElem, xi, eta, type2D)
   if (type2D == 'axisymmetric'):
     psi = LST_shapeFunctions(xi, eta)
-    thickness = 2*pi*(array(x1234) @ array(psi))
+    thickness = 2*pi*(array(xElem) @ array(psi))
   Area = linalg.det(LST_J)
   return Area*thickness*(transpose(B)@D@B)
 
-def LST_plotSingle(x123, y123, u=None, D=None, minMax=None, output='VM', Nplot=10, 
+def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', Nplot=10, 
                   colormap='jet', undeformedLines=True, deformedLines=True, scaling=1.0, type2D="planeStress"):
   """
   Plot a single quadrilateral element.
-  Usage - fig = Q4_plotSingle(x1234, y1234, u=None, D=None, minMax=None, output='VM', Nplot=10, colormap='jet')
+  Usage - fig = Q4_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', Nplot=10, colormap='jet')
   ---------
     Input
   ---------
-  x123 - (list) x locations of nodes
-  y123 - (list) y locations of nodes
+  xElem - (list) x locations of nodes
+  yElem - (list) y locations of nodes
   u - (list) deformation of nodes [u1, v2, u2, v2, u3, v3, u4, v4]
   minMax - (list) min and max value of output plot
   D - (array) constituitive matrix
@@ -390,22 +335,18 @@ def LST_plotSingle(x123, y123, u=None, D=None, minMax=None, output='VM', Nplot=1
   """
   from numpy import linalg, meshgrid, linspace, zeros, shape
   from matplotlib.pyplot import contourf, plot
-
-  [x456, y456] = LST_midpoints(x123, y123)
-  xnodes = x123 + x456
-  ynodes = y123 + y456
   
   # Get deformed node locations
   if (u != None):
     xd = []
     yd = []
-    for i, x in enumerate(xnodes):
+    for i, x in enumerate(xElem):
       xd.append(x+scaling*u[2*i])
-    for i, y in enumerate(ynodes):
+    for i, y in enumerate(yElem):
       yd.append(y+scaling*u[2*i+1])
   else:
-    xd = xnodes
-    yd = ynodes
+    xd = xElem
+    yd = yElem
 
   # Initialize meshgrid values
   # TODO Fix this
@@ -418,11 +359,11 @@ def LST_plotSingle(x123, y123, u=None, D=None, minMax=None, output='VM', Nplot=1
   for i in range(Nplot):
     for j in range(Nplot):
       if (output == 'J'):
-        Z[i,j] = linalg.det(LST_J(x123, y123, xi[i,j], eta[i,j]))
+        Z[i,j] = linalg.det(LST_J(xElem, yElem, xi[i,j], eta[i,j]))
       elif (output == 'VM' or output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2'):
-        Z[i,j] = LST_stress(x123, y123, u, xi[i,j], eta[i,j], D, type2D=type2D, output=output)
+        Z[i,j] = LST_stress(xElem, yElem, u, xi[i,j], eta[i,j], D, type2D=type2D, output=output)
       elif (output == 'epsx' or output == 'epsy' or output == 'gammaxy'):
-        eps = LST_strain(x123, y123, u, xi[i,j], eta[i,j], type2D=type2D)
+        eps = LST_strain(xElem, yElem, u, xi[i,j], eta[i,j], type2D=type2D)
         if (output == 'epsx'):
           Z[i,j] = eps[0]
         elif (output == 'epsy'):
@@ -436,10 +377,10 @@ def LST_plotSingle(x123, y123, u=None, D=None, minMax=None, output='VM', Nplot=1
   
   # Plot things
   if (undeformedLines):
-    x=x123.copy()
-    x.append(x123[0])
-    y=y123.copy()
-    y.append(y123[0])
+    x=xElem.copy()
+    x.append(xElem[0])
+    y=yElem.copy()
+    y.append(yElem[0])
     plot(x, y, 'k--')
   if (deformedLines):
     plot([xd[0], xd[5], xd[1], xd[3], xd[2], xd[4], xd[0]], 
@@ -456,7 +397,7 @@ def LST_plotSingle(x123, y123, u=None, D=None, minMax=None, output='VM', Nplot=1
     return contourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
 
 
-def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, Nplot=10, 
+def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, Nplot=10, 
                   colormap='jet', undeformedLines=True, deformedLines=True):
   """
   Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
