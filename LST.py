@@ -1,17 +1,3 @@
-
-def LST_midpoints(x123, y123):
-  xbar = sum(x123)/3
-  ybar = sum(y123)/3
-  x456 = []
-  y456 = []
-  for i in range(3):
-    dx = xbar - x123[i]
-    dy = ybar - y123[i]
-    x456.append(xbar + 0.5*dx)
-    y456.append(ybar + 0.5*dy)
-  
-  return [x456, y456]
-
 def LST_shapeFunctions(xi, eta):
   """
   [psi1, psi2, psi3, psi4, psi5, psi6] = LST_shapeFunctions(xi, eta)
@@ -59,10 +45,6 @@ def LST_map(xElem, yElem, xi, eta):
   Get the x and y location associated with xi and eta.  Primarily an internal 
   function for Q4_plot and Q4_plotSingle.
   """
-  if (len(xElem) == 3:
-    [x456, y456] = LST_midpoints(x123, y123)
-    xElem = xElem + x456
-    yElem = yElem + y456
   
   psi = LST_shapeFunctions(xi, eta)
   
