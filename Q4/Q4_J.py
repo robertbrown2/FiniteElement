@@ -21,7 +21,7 @@ def Q4_J(x1234, y1234, xi, eta):
   J: (2x2 array) - Jacobian matrix
   """
   from numpy import array
-  from Q4.Q4_shapeFunctions import Q4_shapeDerivatives
+  from .Q4_shapeFunctions import Q4_shapeDerivatives
   
   [dpsidxi, dpsideta] = Q4_shapeDerivatives(xi, eta)
 
