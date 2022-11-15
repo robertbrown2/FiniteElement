@@ -1,1 +1,1 @@
-from test import test2
+from test.test2 import test3
