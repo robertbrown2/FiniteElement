@@ -389,7 +389,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   ---------
     Input
   ---------
-  conn - (list of lists) connectivity matrix - [[n1, n2, n3, n4], [n5, n6, n7, n8], ...]
+  conn - (list of lists) connectivity matrix - [[n1, n2, ...], [n5, n6, ...], ...]
   xnode - (list) x locations of nodes
   ynode - (list) y locations of nodes
   u - (list) deformation of nodes [u1, v2, u2, v2, u3, v3, u4, v4, ...]
@@ -419,6 +419,8 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   if (minMax == None):
     calcMinMax = True
   
+  index = connIndex(conn)
+  
   # Determine Scaling valued
   dxMax = max(xnode) - min(xnode) # these are used for text placement as well
   dyMax = max(ynode) - min(ynode)
@@ -432,8 +434,11 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   if (calcMinMax):
     for nodes in conn:
       # Find the x and y position of nodes for the local element
-      x1234 = [xnode[nodes[0]-1], xnode[nodes[1]-1], xnode[nodes[2]-1], xnode[nodes[3]-1]] 
-      y1234 = [ynode[nodes[0]-1], ynode[nodes[1]-1], ynode[nodes[2]-1], ynode[nodes[3]-1]]
+      xElem = []
+      yElem = []
+      for node in nodes:
+        xElem.append(xnode[node-index])
+        yElem.append(ynode[node-index])
     
       # Define deformation vector for local element
       if (len(u) < 2):
@@ -446,29 +451,30 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     
       # Calculate the stress at the nodes of the local element
       if (output[0] == 's' or output[0]=='t'):
-        sigA = Q4_stress(x1234, y1234, uElem, -1, -1, D, type2D, output)
-        sigB = Q4_stress(x1234, y1234, uElem,  1, -1, D, type2D, output)
-        sigC = Q4_stress(x1234, y1234, uElem,  1,  1, D, type2D, output)
-        sigD = Q4_stress(x1234, y1234, uElem, -1,  1, D, type2D, output)
+        sigA = Q4_stress(xElem, yElem, uElem, 0, 0, D, type2D, output)
+        sigB = Q4_stress(xElem, yElem, uElem, 0, 1, D, type2D, output)
+        sigC = Q4_stress(xElem, yElem, uElem, 1, 0, D, type2D, output)
       else:
-        sigA = Q4_strain(x1234, y1234, uElem, -1, -1, type2D, output)
-        sigB = Q4_strain(x1234, y1234, uElem,  1, -1, type2D, output)
-        sigC = Q4_strain(x1234, y1234, uElem,  1,  1, type2D, output)
-        sigD = Q4_strain(x1234, y1234, uElem, -1,  1, type2D, output)
+        sigA = Q4_strain(xElem, yElem, uElem, 0, 0, type2D, output)
+        sigB = Q4_strain(xElem, yElem, uElem, 0, 1, type2D, output)
+        sigC = Q4_strain(xElem, yElem, uElem, 1, 0, type2D, output)
       if (minMax == None):
         minMax=[0, 0]
-        minMax[0] = min(sigA, sigB, sigC, sigD)
-        minMax[1] = max(sigA, sigB, sigC, sigD)
+        minMax[0] = min(sigA, sigB, sigC)
+        minMax[1] = max(sigA, sigB, sigC)
       else:
-        minMax[0] = min(sigA, sigB, sigC, sigD, minMax[0])
-        minMax[1] = max(sigA, sigB, sigC, sigD, minMax[1])
+        minMax[0] = min(sigA, sigB, sigC, minMax[0])
+        minMax[1] = max(sigA, sigB, sigC, minMax[1])
   
   fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
   
   for nodes in conn:
     # Find the x and y position of nodes for the local element
-    x1234 = [xnode[nodes[0]-1], xnode[nodes[1]-1], xnode[nodes[2]-1], xnode[nodes[3]-1]] 
-    y1234 = [ynode[nodes[0]-1], ynode[nodes[1]-1], ynode[nodes[2]-1], ynode[nodes[3]-1]]
+    xElem = []
+    yElem = []
+    for node in nodes:
+      xElem.append(xnode[node-index])
+      yElem.append(ynode[node-index])
   
     # Define deformation vector for local element
     if (len(u) < 2):
@@ -479,7 +485,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
         uElem.append(u[node*2-2])
         uElem.append(u[node*2-1])
           
-    Q4_plotSingle(x1234, y1234, uElem, D, minMax, output, Nplot, 
+    LST_plotSingle(xElem, yElem, uElem, D, minMax, output, Nplot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
   #pyplot.xlabel('x')
   #pyplot.ylabel('y')
