@@ -6,3 +6,4 @@ from .LST_shapeFunctions import LST_shapeFunctions, LST_shapeDerivatives
 from .LST_stiffness import LST_stiffness
 from .LST_strain import LST_strain
 from .LST_mesh import LST_mesh
+from .LST_constraints import LST_constraints
