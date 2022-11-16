@@ -15,6 +15,7 @@ def LST_stiffness(xElem, yElem, xi, eta, D, thickness=None, type2D='planeStress'
   from numpy import array
   from .LST_B import LST_B
   from .LST_J import LST_J
+  from .LST_shapeFunctions import LST_shapeFunctions
   
   B = LST_B(xElem, yElem, xi, eta, type2D)
   if (type2D == 'axisymmetric'):
