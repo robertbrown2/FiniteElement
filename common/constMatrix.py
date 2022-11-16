@@ -15,7 +15,7 @@ def constMatrix(E, nu, type2D):
   ----------
   D: (array) - constituitve matrix
   """
-
+  from numpy import array
   if (type2D == 'planeStress'):
     D = E / (1 - nu**2) * array([
                              [1, nu, 0],
