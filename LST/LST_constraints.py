@@ -5,8 +5,8 @@ def LST_buildConstraint(constraint1, constraint2, node3):
   node3 is the node associated with the midpoint.
   """
   from ..common.parseConstraint import parseConstraint
-  cx1, cy1, dx1, dy1 = parseConstraint(constraint1)
-  cx2, cy2, dx2, dy2 = parseConstraint(constraint2)
+  cx1, cy1, dx1, dy1, n1 = parseConstraint(constraint1)
+  cx2, cy2, dx2, dy2, n2 = parseConstraint(constraint2)
   cx3 = False
   cy3 = False
   if (cx1 and cx2):
