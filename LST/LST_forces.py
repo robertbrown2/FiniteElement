@@ -1,4 +1,4 @@
-def findMidpointFromLine(line, conn, output='midpoint'):
+def LST_findMidpointFromLine(line, conn, output='midpoint'):
   """
   Find an midpoint associated with a line.
   """
@@ -86,7 +86,7 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
   if (lineLoads != None):
     for lLoad in lineLoads:
       i1 = lLoad[0][0]
-      i2 = findMidpointFromLine(lLoad[0], conn, 'midpoint')
+      i2 = LST_findMidpointFromLine(lLoad[0], conn, 'midpoint')
       i3 = lLoad[0][1]
       if (i2 == None):
         print('could not find midpoint on line connecting nodes:', i1, i3)
@@ -139,7 +139,7 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
         F3y = F3 * dy/L
       elif (dir == 'n'):
         # force is in direction outward from element
-        elem = findMidpointFromLine(lLoad[0], conn, 'element')
+        elem = LST_findMidpointFromLine(lLoad[0], conn, 'element')
         left = isElemOnLeft(xnode, ynode, elem, [i1, i3])
         if (left):
           # normal points to right
