@@ -1,4 +1,4 @@
-def isElemOnLeft(xnode, ynode, elem, line):
+def isElemOnLeft(xnode, ynode, elem, line, index=1):
   """
   Determine if the element is on the left when moving along the line.
   """
@@ -7,8 +7,8 @@ def isElemOnLeft(xnode, ynode, elem, line):
   for node in elem:
     xmid += xnode[node]
     ymid += ynode[node]
-  xmid = xmid / len(elem)
-  ymid = ymid / len(elem)
+  xmid = xmid / len(elem-index)
+  ymid = ymid / len(elem-index)
 
   x1 = xnode[line[0]]
   x2 = xnode[line[1]]
