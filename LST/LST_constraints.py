@@ -1,57 +1,4 @@
-def LST_midpointNode(n1, n2):
-  """
-  Helper function for LST_constraints
-  Determine which node in an element should be used for the midpoint of input nodes
-  2
-  |\
-  | \
-  4  3
-  |   \
-  |    \
-  0--5--1
-  """
-  if (n1 == 0):
-    if (n2 == 1):
-      return 5
-    else: # n2 == 2
-      return 4
-  elif (n1 == 1):
-    if (n2 == 0):
-      return 5
-    else: # n2 == 1
-      return 3
-  else: # n1 == 2
-    if (n2 == 0):
-      return 4
-    else: # n2 == 1
-      return 3
 
-def parseConstraint(c):
-  """
-  Parse a constraint c, which has the form: [node, type, displacement]
-  Output whether the node is constrained in x and y (cx, cy)
-  Also output values of specified displacments (dx, dy)
-  If cx/cy is False, the corresponding displacement will be None
-  """
-  dx = None
-  dy = None
-  if (c[1] == 'x'):
-    cx = True
-    cy = False
-    dx = c[2]
-  elif (c[1] == 'y'):
-    cx = False
-    cy = True
-    dy = c[2]
-  elif (c[1] == 'xy'):
-    cx = True
-    cy = True
-    dx = c[2][0]
-    dy = c[2][1]
-  else:
-    print('Bad constraint: ', c)
-    raise Exception
-  return cx, cy, dx, dy
 
 def LST_buildConstraint(constraint1, constraint2, node3):
   """
@@ -59,6 +6,7 @@ def LST_buildConstraint(constraint1, constraint2, node3):
   constraint1 and constraint2 are the two nodal constraints
   node3 is the node associated with the midpoint.
   """
+  from ..common.parseConstraint import parseConstraint
   cx1, cy1, dx1, dy1 = parseConstraint(constraint1)
   cx2, cy2, dx2, dy2 = parseConstraint(constraint2)
   cx3 = False
