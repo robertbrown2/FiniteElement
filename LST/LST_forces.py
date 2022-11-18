@@ -2,6 +2,8 @@ def LST_findMidpointFromLine(line, conn, output='midpoint'):
   """
   Find an midpoint associated with a line.
   """
+  from .LST_midpointNode import LST_midpointNode
+  
   elemList = []
   for elem in conn:
     flag = [False, False]
