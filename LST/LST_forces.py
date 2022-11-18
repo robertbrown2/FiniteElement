@@ -121,7 +121,7 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
       elif (dir == 'n'):
         # force is in direction outward from element
         elem = LST_findMidpointFromLine(lLoad[0], conn, 'element')
-        left = isElemOnLeft(xnode, ynode, elem, [i1, i3])
+        left = isElemOnLeft(xnode, ynode, elem, [i1, i3], index)
         if (left):
           # normal points to right
           F1x =   F1 * dy/L
