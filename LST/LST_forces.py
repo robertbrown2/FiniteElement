@@ -44,7 +44,7 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
   Create the force vector from a list of point loads, line loads, and face loads.
   """
   from numpy import zeros, sqrt
-
+  from ..common.helpers import connIndex
   index = connIndex(conn)
   forces = zeros(len(xnode)*nDOF)
   if (pointLoads != None):
