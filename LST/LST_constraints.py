@@ -1,5 +1,3 @@
-
-
 def LST_buildConstraint(constraint1, constraint2, node3):
   """
   Create a new constraint on the midpoint node of a line.
@@ -33,6 +31,7 @@ def LST_constraints(constraints, conn):
   If so, additionally constrain any nodes in between the constrained nodes.
   Set specified displacements to the average of line endpoint values.
   """
+  from .LST_midpointNode import LST_midpointNode
   conNodes = []
   LSTconstraints = constraints.copy()
   for elem in conn:
