@@ -67,7 +67,7 @@ def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J"
           uElem.append(u[node*2-1])
     
       # Calculate the stress at the nodes of the local element
-      if (output[0] == 's' or output[0]=='t'):
+      if (output[0] == 's' or output[0]=='t' or output == 'VM'):
         sigA = Q4_stress(x1234, y1234, uElem, -1, -1, D, type2D, output)
         sigB = Q4_stress(x1234, y1234, uElem,  1, -1, D, type2D, output)
         sigC = Q4_stress(x1234, y1234, uElem,  1,  1, D, type2D, output)
