@@ -47,6 +47,7 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
   """
   from numpy import zeros, sqrt
   from ..common.helpers import connIndex
+  from ..common.isElemOnLeft import isElemOnLeft
   index = connIndex(conn)
   forces = zeros(len(xnode)*nDOF)
   if (pointLoads != None):
