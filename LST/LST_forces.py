@@ -39,28 +39,6 @@ def LST_findMidpointFromLine(line, conn, output='midpoint'):
         raise Exception
   return None
 
-def isElemOnLeft(xnode, ynode, elem, line):
-  """
-  Determine if the element is on the left when moving along the line.
-  """
-  xmid = (xnode[elem[0]] + xnode[elem[1]] + xnode[elem[2]])/3
-  ymid = (ynode[elem[0]] + ynode[elem[1]] + ynode[elem[2]])/3
-  x1 = xnode[line[0]]
-  x2 = xnode[line[1]]
-  y1 = ynode[line[0]]
-  y2 = ynode[line[1]]
-
-  dx1 = x2 - x1
-  dxm = xmid - x1
-  dy1 = y2 - y1
-  dym = ymid - y1
-
-  # cross product of {dx1, dy1} x {dxm, dym}
-  if (dx1*dym - dy1*dxm > 0): 
-    return True
-  else:
-    return False
-
 def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, faceLoads=None):
   """
   Create the force vector from a list of point loads, line loads, and face loads.
