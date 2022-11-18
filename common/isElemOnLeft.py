@@ -5,10 +5,10 @@ def isElemOnLeft(xnode, ynode, elem, line, index=1):
   xmid = 0
   ymid = 0
   for node in elem:
-    xmid += xnode[node]
-    ymid += ynode[node]
-  xmid = xmid / len(elem-index)
-  ymid = ymid / len(elem-index)
+    xmid += xnode[node-index]
+    ymid += ynode[node-index]
+  xmid = xmid / len(elem)
+  ymid = ymid / len(elem)
 
   x1 = xnode[line[0]]
   x2 = xnode[line[1]]
