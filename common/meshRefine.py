@@ -59,5 +59,5 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads):
       connNew.append([elem[2], lineNodes[1], lineNodes[0]])
       # 4-5-6
       connNew.append([lineNodes[0], lineNodes[1], lineNodes[2]])
-  
+  faceLoadsNew = None
   return [xnodeNew, ynodeNew, connNew, lineLoadsNew, faceLoadsNew]
