@@ -28,4 +28,4 @@ def whichLine(newLine, lineList, multiple=False):
   if (multiple and len(lines)>0):
     return lines
   
-  return -1
+  return None
