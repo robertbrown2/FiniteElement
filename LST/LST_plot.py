@@ -1,5 +1,5 @@
 def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, Nplot=10, 
-                  colormap='jet', undeformedLines=True, deformedLines=True):
+                  colormap='jet', undeformedLines=True, deformedLines=True, nodeNumbers=True):
   """
   Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
   Usage (Jacobian) - plotAll(conn, xnode, ynode)
@@ -134,7 +134,9 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     pyplot.text(xAvg - .6*(dx), yMin - (dy)*.15, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
     pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % minMax[1], fontsize=8)
     pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % minMax[0], fontsize=8)
-  
+  if (nodeNumbers):
+    for i in range(len(xnode)):
+      pyplot.text(xnode[i]+.1, ynode[i]+.1, str(i+index))
   # Create colorbar
   nValues = arange(0, 30)
   if (minMax != None):
