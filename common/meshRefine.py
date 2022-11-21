@@ -1,5 +1,5 @@
 def meshRefine(xnode, ynode, conn):
-  from .helpers import connIndex
+  from .helpers import connIndex, whichLine
   """
   For a triangle, we generate new midpoints, and split each element into four as shown below:
   3
