@@ -42,6 +42,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', Nplot
   """
   from numpy import linalg, meshgrid, linspace, zeros, shape
   from matplotlib.pyplot import contourf, plot
+  from matplotlib import tri
   from .LST_stress import LST_stress
   from .LST_strain import LST_strain
   from .LST_plotSingle import LST_plotSingle
@@ -59,22 +60,20 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', Nplot
     xd = xElem
     yd = yElem
 
-  # Initialize meshgrid values
-  # TODO Fix this
-  [xi, eta] = meshgrid(linspace(-1, 1, Nplot), linspace(-1, 1, Nplot))
-  xi = xi.flatten()
-  eta = eta.flatten()
+  # Initialize mesh values
   X = []
   Y = []
   Z = []
-  for i in range(len(xi)):
-    if (xi[i] + eta[i] <= 1.0):
+  for i in range(0, nPlot+1):
+    for j in range(0, i+1):
+      xi = i/nPlot
+      eta = j/nPlot
       if (output == 'J'):
-        Z.append(linalg.det(LST_J(xElem, yElem, xi[i], eta[i])))
+        Z.append(linalg.det(LST_J(xElem, yElem, xi, eta)))
       elif (output == 'VM' or output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2'):
-        Z.append(LST_stress(xElem, yElem, u, xi[i], eta[i], D, type2D=type2D, output=output))
+        Z.append(LST_stress(xElem, yElem, u, xi, eta, D, type2D=type2D, output=output))
       elif (output == 'epsx' or output == 'epsy' or output == 'gammaxy'):
-        eps = LST_strain(xElem, yElem, u, xi[i], eta[i], type2D=type2D)
+        eps = LST_strain(xElem, yElem, u, xi, eta, type2D=type2D)
         if (output == 'epsx'):
           Z.append(eps[0])
         elif (output == 'epsy'):
@@ -84,10 +83,10 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', Nplot
       else:
         print('Output type', output, ' not supported')
         raise Exception
-    [xval, yval] = LST_map(xd, yd, xi[i], eta[i])
+    [xval, yval] = LST_map(xd, yd, xi, eta)
     Y.append(yval)
     X.append(xval)
-  
+  triang = tri.Triangulation(X, Y)
   # Plot things
   if (undeformedLines):
     x=[xElem[0], xElem[1], xElem[2], xElem[0]]
@@ -98,11 +97,11 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', Nplot
          [yd[0], yd[5], yd[1], yd[3], yd[2], yd[4], yd[0]], 'k')
 
   if (minMax == None):
-    return contourf(X, Y, Z, cmap=colormap)
+    return tri.tricontourf(triang, Z, cmap=colormap)
   else:
     
     lenMinMax = len(minMax)
     if lenMinMax != 2:
       print('Warning: minMax (in C4_plot) should be a list of two values')
 
-    return contourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
+    return tricontourf(triang, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
