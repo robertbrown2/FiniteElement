@@ -65,7 +65,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
   Y = []
   Z = []
   for i in range(0, nPlot+1):
-    for j in range(0, i+1):
+    for j in range(i, nPlot+1):
       xi = i/nPlot
       eta = 1-(j/nPlot)
       if (output == 'J'):
