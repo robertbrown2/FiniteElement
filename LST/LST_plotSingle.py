@@ -41,7 +41,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
   scaling - (float) Ratio of displayed deformation to actual deformation
   """
   from numpy import linalg, meshgrid, linspace, zeros, shape
-  from matplotlib.pyplot import contourf, plot
+  from matplotlib import pyplot
   from matplotlib import tri
   from .LST_stress import LST_stress
   from .LST_strain import LST_strain
@@ -85,9 +85,9 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
   if (undeformedLines):
     x=[xElem[0], xElem[1], xElem[2], xElem[0]]
     y=[yElem[0], yElem[1], yElem[2], yElem[0]]
-    plot(x, y, 'k--')
+    pyplot.plot(x, y, 'k--')
   if (deformedLines):
-    plot([xd[0], xd[5], xd[1], xd[3], xd[2], xd[4], xd[0]], 
+    pyplot.plot([xd[0], xd[5], xd[1], xd[3], xd[2], xd[4], xd[0]], 
          [yd[0], yd[5], yd[1], yd[3], yd[2], yd[4], yd[0]], 'k')
 
   if (minMax == None):
