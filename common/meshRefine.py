@@ -32,7 +32,7 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads):
       lineNodes=[]
       for line in lines:
         iLine = whichLine(line, LineList)
-        if (iLine == -1):
+        if (iLine == None):
           xmid = (xnode[line[0]-index] + xnode[line[1]-index])/2
           ymid = (ynode[line[0]-index] + ynode[line[1]-index])/2
           iLine = len(LineList)
