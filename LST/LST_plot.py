@@ -41,6 +41,8 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     deformedLines=False
   if (minMax == None and output != 'J'):
     calcMinMax = True
+  else:
+    calcMinMax = False
   
   index = connIndex(conn)
   
