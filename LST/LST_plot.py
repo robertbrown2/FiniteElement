@@ -1,4 +1,4 @@
-def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, Nplot=10, 
+def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, nPlot=10, 
                   colormap='jet', undeformedLines=True, deformedLines=True, nodeNumbers=True):
   """
   Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
@@ -110,7 +110,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
         uElem.append(u[node*2-2])
         uElem.append(u[node*2-1])
           
-    LST_plotSingle(xElem, yElem, uElem, D, minMax, output, Nplot, 
+    LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
   #pyplot.xlabel('x')
   #pyplot.ylabel('y')
