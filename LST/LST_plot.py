@@ -137,23 +137,24 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   
   # Create colorbar
   nValues = arange(0, 30)
-  cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
-  scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
-  scmap.set_array(nValues)
-  cbar = pyplot.colorbar(scmap)
+  if (minMax != None):
+    cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
+    scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
+    scmap.set_array(nValues)
+    cbar = pyplot.colorbar(scmap)
   
-  # Label colorbar
-  if (output == 'VM'):
-    cbar.set_label('Von Mises stress')
-  elif (output == 'J'):
-    cbar.set_label('Determinant of Jacobian')
-  elif (output == 'sigx'):
-    cbar.set_label('Normal stress - x')
-  elif (output == 'sigy'):
-    cbar.set_label('Normal stress - y')
-  elif (output == 'tauxy'):
-    cbar.set_label('Shear stress - xy')
-  elif (output == 'sig1'):
-    cbar.set_label('Max normal stress')
-  elif (output == 'sig2'):
-    cbar.set_label('Min normal stress')
+    # Label colorbar
+    if (output == 'VM'):
+      cbar.set_label('Von Mises stress')
+    elif (output == 'J'):
+      cbar.set_label('Determinant of Jacobian')
+    elif (output == 'sigx'):
+      cbar.set_label('Normal stress - x')
+    elif (output == 'sigy'):
+      cbar.set_label('Normal stress - y')
+    elif (output == 'tauxy'):
+      cbar.set_label('Shear stress - xy')
+    elif (output == 'sig1'):
+      cbar.set_label('Max normal stress')
+    elif (output == 'sig2'):
+      cbar.set_label('Min normal stress')
