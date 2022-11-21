@@ -16,7 +16,7 @@ def LST_map(xElem, yElem, xi, eta):
   
   return([x,y])
 
-def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', Nplot=10, 
+def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot=10, 
                   colormap='jet', undeformedLines=True, deformedLines=True, scaling=1.0, type2D="planeStress"):
   """
   Plot a single quadrilateral element.
