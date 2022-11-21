@@ -53,7 +53,7 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads, constraints):
           ynodeNew.append(ymid)
           
           if (constraintNodes.count(line[0])>0 and constraintNodes.count(line[1])>0):
-            for i, cNode in constraintNodes:
+            for i, cNode in enumerate(constraintNodes):
               if (cNode == line[0]):
                 c1 = constraints[i]
               if (cNode == line[1]):
