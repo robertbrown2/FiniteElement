@@ -1,4 +1,4 @@
-def meshRefine(xnode, ynode, conn):
+def meshRefine(xnode, ynode, conn, lineLoads, faceLoads):
   from .helpers import connIndex, whichLine
   """
   For a triangle, we generate new midpoints, and split each element into four as shown below:
@@ -12,6 +12,11 @@ def meshRefine(xnode, ynode, conn):
   """
   
   LineList = []
+  if (lineLoads != None):
+    lineLoadList = []
+    for lLoad in lineLoads:
+      lineLoadList.append(lLoad[0])
+  lineLoadNew = []
   connNew = []
   xnodeNew = xnode.copy()
   ynodeNew = ynode.copy()
@@ -35,6 +40,16 @@ def meshRefine(xnode, ynode, conn):
           xnodeNew.append(xmid)
           ynodeNew.append(ymid)
         lineNodes.append(iLine+len(xnode)+index)
+        if (lineLoads != None):
+          loadLines = whichLine(line, lineLoadList, multiple=True)
+          
+          if (loadLines != None):
+            line1 = [line[0], iLine + len(xnode) + index]
+            line2 = [iLine + len(xnode) + index, line[1]]
+            for loadLine in loadLines:
+              load = lineLoads[loadLine]
+              lineLoadsNew.append([line1, load[1], load[2]])
+              lineLoadsNew.append([line2, load[1], load[2]])
         
       # 1-6-5
       connNew.append([elem[0], lineNodes[2], lineNodes[1]])
@@ -45,4 +60,4 @@ def meshRefine(xnode, ynode, conn):
       # 4-5-6
       connNew.append([lineNodes[0], lineNodes[1], lineNodes[2]])
   
-  return [xnodeNew, ynodeNew, connNew]
+  return [xnodeNew, ynodeNew, connNew, lineLoadsNew, faceLoadsNew]
