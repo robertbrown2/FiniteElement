@@ -15,10 +15,17 @@ def sameLines(line1, line2):
   else:
     return False
 
-def whichLine(newLine, lineList):
+def whichLine(newLine, lineList, multiple=False):
   # Find the index of a line from a list of lines
   # Returns -1 if not found
+  lines = []
   for i, oldLine in enumerate(lineList):
     if (sameLines(newLine, oldLine)):
-      return i
+      if (multiple):
+        lines.append(i)
+      else:
+        return i
+  if (multiple and len(lines)>0):
+    return lines
+  
   return -1
