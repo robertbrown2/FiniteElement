@@ -77,9 +77,9 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
       else:
         print('Output type', output, ' not supported')
         raise Exception
-    [xval, yval] = LST_map(xd, yd, xi, eta)
-    Y.append(yval)
-    X.append(xval)
+      [xval, yval] = LST_map(xd, yd, xi, eta)
+      Y.append(yval)
+      X.append(xval)
   #triang = tri.Triangulation(X, Y)
   # Plot things
   if (undeformedLines):
