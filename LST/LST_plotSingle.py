@@ -80,7 +80,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
     [xval, yval] = LST_map(xd, yd, xi, eta)
     Y.append(yval)
     X.append(xval)
-  triang = tri.Triangulation(X, Y)
+  #triang = tri.Triangulation(X, Y)
   # Plot things
   if (undeformedLines):
     x=[xElem[0], xElem[1], xElem[2], xElem[0]]
@@ -91,11 +91,11 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
          [yd[0], yd[5], yd[1], yd[3], yd[2], yd[4], yd[0]], 'k')
 
   if (minMax == None):
-    return tri.tricontourf(triang, Z, cmap=colormap)
+    return pyplot.gca().tricontourf(X, Y, Z, cmap=colormap)
   else:
     
     lenMinMax = len(minMax)
     if lenMinMax != 2:
       print('Warning: minMax (in C4_plot) should be a list of two values')
 
-    return tricontourf(triang, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
+    return pyplot.gca().tricontourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
