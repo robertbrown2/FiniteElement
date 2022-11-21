@@ -1,4 +1,4 @@
-def meshRefine(xnode, ynode, conn, lineLoads, faceLoads):
+def meshRefine(xnode, ynode, conn, lineLoads, faceLoads, constraints):
   from .helpers import connIndex, whichLine
   """
   For a triangle, we generate new midpoints, and split each element into four as shown below:
@@ -10,17 +10,29 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads):
   | \| \
   1--6--2
   """
-  
+  from .buildMidpointConstraint import buildMidpointConstraint
   LineList = []
   if (lineLoads != None):
     lineLoadList = []
     for lLoad in lineLoads:
       lineLoadList.append(lLoad[0])
+      
   lineLoadsNew = []
+  constraintsNew = constraints.copy()
   connNew = []
   xnodeNew = xnode.copy()
   ynodeNew = ynode.copy()
   index = connIndex(conn)
+  
+  # Grab all nodes that have constraints
+  if (constraints != None):
+    constraintNodes = []
+    for c in constraints:
+      constraintNodes.append(c[0])
+  else:
+    constraintNodes = None
+   
+  
   for elem in conn:
     if (len(elem) == 3):
       lines = []
@@ -39,6 +51,15 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads):
           LineList.append(line)
           xnodeNew.append(xmid)
           ynodeNew.append(ymid)
+          
+          if (constraintNodes.count(line[0])>0 and constraintNodes.count(line[1])>0):
+            for i, cNode in constraintNodes:
+              if (cNode == line[0]):
+                c1 = constraints[i]
+              if (cNode == line[1]):
+                c2 = constraints[i]
+            constraintsNew.append(buildMidpointConstraint(c1, c2, iLine + len(xnode) + index))
+          
         lineNodes.append(iLine+len(xnode)+index)
         if (lineLoads != None):
           loadLines = whichLine(line, lineLoadList, multiple=True)
@@ -60,4 +81,6 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads):
       # 4-5-6
       connNew.append([lineNodes[0], lineNodes[1], lineNodes[2]])
   faceLoadsNew = None
-  return [xnodeNew, ynodeNew, connNew, lineLoadsNew, faceLoadsNew]
+  
+  
+  return [xnodeNew, ynodeNew, connNew, lineLoadsNew, faceLoadsNew, constraintsNew]
