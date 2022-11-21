@@ -73,7 +73,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
           uElem.append(u[node*2-1])
     
       # Calculate the stress at the nodes of the local element
-      if (output[0] == 's' or output[0]=='t' or output[0]='VM'):
+      if (output[0] == 's' or output[0]=='t' or output='VM'):
         sigA = LST_stress(xElem, yElem, uElem, 0, 0, D, type2D, output)
         sigB = LST_stress(xElem, yElem, uElem, 0, 1, D, type2D, output)
         sigC = LST_stress(xElem, yElem, uElem, 1, 0, D, type2D, output)
