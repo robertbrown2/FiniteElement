@@ -16,7 +16,7 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads):
     lineLoadList = []
     for lLoad in lineLoads:
       lineLoadList.append(lLoad[0])
-  lineLoadNew = []
+  lineLoadsNew = []
   connNew = []
   xnodeNew = xnode.copy()
   ynodeNew = ynode.copy()
