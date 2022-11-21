@@ -65,7 +65,7 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads, constraints):
           loadLines = whichLine(line, lineLoadList, multiple=True)
           
           if (loadLines != None):
-            if (line[0] == lineLoadList[loadLines][0][0]):
+            if (line[0] == lineLoadList[loadLines][0]):
               line1 = [line[0], iLine + len(xnode) + index]
               line2 = [iLine + len(xnode) + index, line[1]]
             else:
