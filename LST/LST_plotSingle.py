@@ -73,13 +73,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', Nplot
       elif (output == 'VM' or output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2'):
         Z.append(LST_stress(xElem, yElem, u, xi, eta, D, type2D=type2D, output=output))
       elif (output == 'epsx' or output == 'epsy' or output == 'gammaxy'):
-        eps = LST_strain(xElem, yElem, u, xi, eta, type2D=type2D)
-        if (output == 'epsx'):
-          Z.append(eps[0])
-        elif (output == 'epsy'):
-          Z.append(eps[1])
-        else:
-          Z.append(eps[2])
+        Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
       else:
         print('Output type', output, ' not supported')
         raise Exception
