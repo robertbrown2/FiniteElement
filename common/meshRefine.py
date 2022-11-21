@@ -30,7 +30,7 @@ def meshRefine(xnode, ynode, conn):
         if (iLine == -1):
           xmid = (xnode[line[0]-index] + xnode[line[1]-index])/2
           ymid = (ynode[line[0]-index] + ynode[line[1]-index])/2
-          iLine = len(LSTLineList)
+          iLine = len(LineList)
           LineList.append(line)
           xnodeNew.append(xmid)
           ynodeNew.append(ymid)
