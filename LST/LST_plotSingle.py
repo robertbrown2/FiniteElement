@@ -67,7 +67,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
   for i in range(0, nPlot+1):
     for j in range(0, i+1):
       xi = i/nPlot
-      eta = j/nPlot
+      eta = 1-(j/nPlot)
       if (output == 'J'):
         Z.append(linalg.det(LST_J(xElem, yElem, xi, eta)))
       elif (output == 'VM' or output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2'):
