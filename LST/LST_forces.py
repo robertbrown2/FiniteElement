@@ -82,7 +82,7 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
 
       if (type(f) == type(1) or type(f) == type(1.0)):
         # Rectangular Load - F = int(psi*f, 0, L)
-        frect = L*f
+        frect = f
         ftri = 0
       elif (len(f) == 2):
         # Triangular Load
