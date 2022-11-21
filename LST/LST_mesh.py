@@ -30,7 +30,7 @@ def LST_mesh(xnode, ynode, CSTconn):
     LSTelem = elem.copy()
     for line in lines:
       iLine = whichLine(line, LSTLineList)
-      if (iLine == -1):
+      if (iLine == None):
         xmid = (xnode[line[0]-index] + xnode[line[1]-index])/2
         ymid = (ynode[line[0]-index] + ynode[line[1]-index])/2
         iLine = len(LSTLineList)
