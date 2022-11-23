@@ -39,7 +39,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   
   if (len(u) < 2):
     deformedLines=False
-  if (minMax == None and output != 'J'):
+  if (minMax == None and output != 'J' and False):
     calcMinMax = True
   else:
     calcMinMax = False
@@ -92,7 +92,9 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
         minMax[1] = max(sigA, sigB, sigC, minMax[1])
   
   fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
-  
+  Xall = []
+  Yall = []
+  Zall = []
   for nodes in conn:
     # Find the x and y position of nodes for the local element
     xElem = []
@@ -110,10 +112,14 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
         uElem.append(u[node*2-2])
         uElem.append(u[node*2-1])
           
-    LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
+    [X, Y, Z] = LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
+    Xall += X
+    Yall += Y
+    Zall += Z
   #pyplot.xlabel('x')
   #pyplot.ylabel('y')
+  pyplot.tricontourf(Xall, Yall, Zall)
   if (output != 'J'):
     xMax = xnode[0]
     xMin = xnode[0]
