@@ -145,9 +145,11 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
       pyplot.text(xnode[i]+.1, ynode[i]+.1, str(i+index))
   # Create colorbar
   nValues = arange(0, 30)
-  if (minMax != None):
+  if (minMax == None):
     minMax[0] = min(Z)
     minMax[1] = max(Z)
+  if (minMax != None):
+
     cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
     scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
     scmap.set_array(nValues)
