@@ -1,5 +1,5 @@
 def appendTriangles(plotTri, elemTri):
-  from numpy import array
+  from numpy import concatenate
   
   
   maxNode = -1
