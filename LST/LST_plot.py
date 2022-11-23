@@ -121,7 +121,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   #pyplot.ylabel('y')
   if (minMax==None):
     minMax = [min(Zall), max(Zall)]
-  pyplot.tricontourf(Xall, Yall, Zall, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20))
+  pyplot.tricontourf(Xall, Yall, Zall, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
   if (output != 'J'):
     xMax = xnode[0]
     xMin = xnode[0]
