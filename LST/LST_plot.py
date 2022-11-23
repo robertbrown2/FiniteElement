@@ -146,8 +146,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   # Create colorbar
   nValues = arange(0, 30)
   if (minMax == None):
-    minMax[0] = min(Z)
-    minMax[1] = max(Z)
+    minMax = [min(Z), max(Z)]
   if (minMax != None):
 
     cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
