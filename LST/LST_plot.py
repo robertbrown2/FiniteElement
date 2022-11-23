@@ -9,7 +9,7 @@ def appendTriangles(plotTri, elemTri):
   outputTri = concatenate((plotTri, elemTri))
   return outputTri
 
-def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, nPlot=10, 
+def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, nPlot=2, 
                   colormap='jet', undeformedLines=True, deformedLines=True, nodeNumbers=True):
   """
   Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
