@@ -1,12 +1,10 @@
 def appendTriangles(plotTri, elemTri):
-  from numpy import concatenate
+  from numpy import concatenate, amax
   
   if (type(plotTri) == type(None)):
     return elemTri
   
-  maxNode = -1
-  for tri in plotTri:
-    maxNode = max(max(tri), maxNode)
+  maxNode = amax(plotTri)
   elemTri += maxNode + 1
   outputTri = concatenate((plotTri, elemTri))
   return outputTri
