@@ -31,7 +31,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   from matplotlib import colors
   #from matplotlib import colorbar
   from matplotlib import figure
-  from numpy import sqrt, floor, arange
+  from numpy import sqrt, floor, arange, linspace
   from .LST_stress import LST_stress
   from .LST_strain import LST_strain
   from ..common.helpers import connIndex
@@ -121,7 +121,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   #pyplot.ylabel('y')
   if (minMax==None):
     minMax = [min(Zall), max(Zall)]
-  pyplot.tricontourf(Xall, Yall, Zall, vmin=minMax[0], vmax=minMax[1])
+  pyplot.tricontourf(Xall, Yall, Zall, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20))
   if (output != 'J'):
     xMax = xnode[0]
     xMin = xnode[0]
