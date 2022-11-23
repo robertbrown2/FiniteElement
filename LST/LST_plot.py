@@ -1,3 +1,14 @@
+def appendTriangles(plotTri, elemTri):
+  from numpy import array
+  
+  
+  maxNode = -1
+  for tri in plotTri:
+    maxNode = max(max(tri), maxNode)
+  elemTri += maxNode
+  outputTri = concatenate((plotTri, elemTri))
+  return outputTri
+
 def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, nPlot=10, 
                   colormap='jet', undeformedLines=True, deformedLines=True, nodeNumbers=True):
   """
@@ -31,7 +42,8 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   from matplotlib import colors
   #from matplotlib import colorbar
   from matplotlib import figure
-  from numpy import sqrt, floor, arange, linspace
+  from matplotlib import tri
+  from numpy import sqrt, floor, arange, linspace, array
   from .LST_stress import LST_stress
   from .LST_strain import LST_strain
   from ..common.helpers import connIndex
@@ -56,6 +68,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   Xall = []
   Yall = []
   Zall = []
+  plotTriangles = []
   for nodes in conn:
     # Find the x and y position of nodes for the local element
     xElem = []
@@ -75,6 +88,9 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
           
     [X, Y, Z] = LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
+    triang = Triangulation(X, Y)
+    elemTriangles = triang.triangles
+    plotTriangles = appendTriangles(elemTriangles)
     Xall += X
     Yall += Y
     Zall += Z
