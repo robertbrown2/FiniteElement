@@ -57,7 +57,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   # Determine Scaling value
   dxMax = max(xnode) - min(xnode) # these are used for text placement as well
   dyMax = max(ynode) - min(ynode)
-  if (u==None):
+  if (len(u) < 2):
     scaling = 1.0
   elif (scaling == None):
     rMax = sqrt(dxMax**2 + dyMax**2)
