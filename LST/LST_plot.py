@@ -39,14 +39,10 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   
   if (len(u) < 2):
     deformedLines=False
-  if (minMax == None and output != 'J' and False):
-    calcMinMax = True
-  else:
-    calcMinMax = False
   
   index = connIndex(conn)
   
-  # Determine Scaling valued
+  # Determine Scaling value
   dxMax = max(xnode) - min(xnode) # these are used for text placement as well
   dyMax = max(ynode) - min(ynode)
   if (len(u) < 2):
@@ -55,41 +51,6 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     rMax = sqrt(dxMax**2 + dyMax**2)
     uMax = max(max(u), abs(min(u)))
     scaling = max(floor(rMax/(25*uMax)), 1)
-  
-  if (calcMinMax):
-    for nodes in conn:
-      # Find the x and y position of nodes for the local element
-      xElem = []
-      yElem = []
-      for node in nodes:
-        xElem.append(xnode[node-index])
-        yElem.append(ynode[node-index])
-    
-      # Define deformation vector for local element
-      if (len(u) < 2):
-        uElem = None
-      else:
-        uElem = []
-        for node in nodes:
-          uElem.append(u[node*2-2])
-          uElem.append(u[node*2-1])
-    
-      # Calculate the stress at the nodes of the local element
-      if (output[0] == 's' or output[0]=='t' or output=='VM'):
-        sigA = LST_stress(xElem, yElem, uElem, 0, 0, D, type2D, output)
-        sigB = LST_stress(xElem, yElem, uElem, 0, 1, D, type2D, output)
-        sigC = LST_stress(xElem, yElem, uElem, 1, 0, D, type2D, output)
-      else:
-        sigA = LST_strain(xElem, yElem, uElem, 0, 0, type2D, output)
-        sigB = LST_strain(xElem, yElem, uElem, 0, 1, type2D, output)
-        sigC = LST_strain(xElem, yElem, uElem, 1, 0, type2D, output)
-      if (minMax == None):
-        minMax=[0, 0]
-        minMax[0] = min(sigA, sigB, sigC)
-        minMax[1] = max(sigA, sigB, sigC)
-      else:
-        minMax[0] = min(sigA, sigB, sigC, minMax[0])
-        minMax[1] = max(sigA, sigB, sigC, minMax[1])
   
   fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
   Xall = []
@@ -121,6 +82,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   #pyplot.ylabel('y')
   if (minMax==None):
     minMax = [min(Zall), max(Zall)]
+    
   pyplot.tricontourf(Xall, Yall, Zall, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
   if (output != 'J'):
     xMax = xnode[0]
