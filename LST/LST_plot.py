@@ -138,15 +138,15 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     dx = xMax - xMin
     dy = yMax - yMin
     pyplot.text(xAvg - .6*(dx), yMin - (dy)*.15, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
-    pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % minMax[1], fontsize=8)
-    pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % minMax[0], fontsize=8)
+    pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % max(Z), fontsize=8)
+    pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % min(Z), fontsize=8)
   if (nodeNumbers):
     for i in range(len(xnode)):
       pyplot.text(xnode[i]+.1, ynode[i]+.1, str(i+index))
   # Create colorbar
   nValues = arange(0, 30)
   if (minMax != None):
-    cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
+    cnorm = colors.Normalize(vmin = min(Z), vmax = max(Z))
     scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
     scmap.set_array(nValues)
     cbar = pyplot.colorbar(scmap)
