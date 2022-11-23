@@ -1,7 +1,7 @@
 def appendTriangles(plotTri, elemTri):
   from numpy import concatenate
   
-  if (plotTri == None):
+  if (type(plotTri) == NoneType):
     return elemTri
   
   maxNode = -1
