@@ -91,11 +91,12 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
          [yd[0], yd[5], yd[1], yd[3], yd[2], yd[4], yd[0]], 'k')
 
   if (minMax == None):
-    return pyplot.gca().tricontourf(X, Y, Z, cmap=colormap)
+    #return pyplot.gca().tricontourf(X, Y, Z, cmap=colormap)
+    return [X, Y, Z]
   else:
     
     lenMinMax = len(minMax)
     if lenMinMax != 2:
       print('Warning: minMax (in C4_plot) should be a list of two values')
 
-    return pyplot.gca().tricontourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)
+    return [X, Y, Z] #pyplot.gca().tricontourf(X, Y, Z, cmap=colormap, vmin=minMax[0], vmax=minMax[1], levels=10)

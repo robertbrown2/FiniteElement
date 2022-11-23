@@ -1,4 +1,15 @@
-def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, nPlot=10, 
+def appendTriangles(plotTri, elemTri):
+  from numpy import concatenate, amax
+  
+  if (type(plotTri) == type(None)):
+    return elemTri
+  
+  maxNode = amax(plotTri)
+  elemTri += maxNode + 1
+  outputTri = concatenate((plotTri, elemTri))
+  return outputTri
+
+def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, nPlot=2, 
                   colormap='jet', undeformedLines=True, deformedLines=True, nodeNumbers=True):
   """
   Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
@@ -31,68 +42,33 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   from matplotlib import colors
   #from matplotlib import colorbar
   from matplotlib import figure
-  from numpy import sqrt, floor, arange
+  from matplotlib import tri
+  from numpy import sqrt, floor, arange, linspace, array
   from .LST_stress import LST_stress
   from .LST_strain import LST_strain
   from ..common.helpers import connIndex
   from .LST_plotSingle import LST_plotSingle
   
-  if (len(u) < 2):
+  if (type(u) == type(None)):
     deformedLines=False
-  if (minMax == None and output != 'J'):
-    calcMinMax = True
-  else:
-    calcMinMax = False
   
   index = connIndex(conn)
   
-  # Determine Scaling valued
+  # Determine Scaling value
   dxMax = max(xnode) - min(xnode) # these are used for text placement as well
   dyMax = max(ynode) - min(ynode)
-  if (len(u) < 2):
+  if (type(u) == type(None)):
     scaling = 1.0
   elif (scaling == None):
     rMax = sqrt(dxMax**2 + dyMax**2)
     uMax = max(max(u), abs(min(u)))
     scaling = max(floor(rMax/(25*uMax)), 1)
   
-  if (calcMinMax):
-    for nodes in conn:
-      # Find the x and y position of nodes for the local element
-      xElem = []
-      yElem = []
-      for node in nodes:
-        xElem.append(xnode[node-index])
-        yElem.append(ynode[node-index])
-    
-      # Define deformation vector for local element
-      if (len(u) < 2):
-        uElem = None
-      else:
-        uElem = []
-        for node in nodes:
-          uElem.append(u[node*2-2])
-          uElem.append(u[node*2-1])
-    
-      # Calculate the stress at the nodes of the local element
-      if (output[0] == 's' or output[0]=='t' or output=='VM'):
-        sigA = LST_stress(xElem, yElem, uElem, 0, 0, D, type2D, output)
-        sigB = LST_stress(xElem, yElem, uElem, 0, 1, D, type2D, output)
-        sigC = LST_stress(xElem, yElem, uElem, 1, 0, D, type2D, output)
-      else:
-        sigA = LST_strain(xElem, yElem, uElem, 0, 0, type2D, output)
-        sigB = LST_strain(xElem, yElem, uElem, 0, 1, type2D, output)
-        sigC = LST_strain(xElem, yElem, uElem, 1, 0, type2D, output)
-      if (minMax == None):
-        minMax=[0, 0]
-        minMax[0] = min(sigA, sigB, sigC)
-        minMax[1] = max(sigA, sigB, sigC)
-      else:
-        minMax[0] = min(sigA, sigB, sigC, minMax[0])
-        minMax[1] = max(sigA, sigB, sigC, minMax[1])
-  
   fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
-  
+  Xall = []
+  Yall = []
+  Zall = []
+  plotTriangles = None
   for nodes in conn:
     # Find the x and y position of nodes for the local element
     xElem = []
@@ -102,7 +78,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
       yElem.append(ynode[node-index])
   
     # Define deformation vector for local element
-    if (len(u) < 2):
+    if (type(u) == type(None)):
       uElem = None
     else:
       uElem = []
@@ -110,10 +86,23 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
         uElem.append(u[node*2-2])
         uElem.append(u[node*2-1])
           
-    LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
+    [X, Y, Z] = LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
+    triang = tri.Triangulation(X, Y)
+    elemTriangles = triang.triangles
+    plotTriangles = appendTriangles(plotTriangles, elemTriangles)
+    Xall += X
+    Yall += Y
+    Zall += Z
   #pyplot.xlabel('x')
   #pyplot.ylabel('y')
+  if (minMax==None):
+    minMax = [min(Zall), max(Zall)]
+  
+  if (abs(min(Zall) - max(Zall))<1e-10):
+    pyplot.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], cmap=colormap)
+  else:
+    pyplot.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
   if (output != 'J'):
     xMax = xnode[0]
     xMin = xnode[0]
@@ -132,14 +121,16 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     dx = xMax - xMin
     dy = yMax - yMin
     pyplot.text(xAvg - .6*(dx), yMin - (dy)*.15, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
-    pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % minMax[1], fontsize=8)
-    pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % minMax[0], fontsize=8)
+    pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % max(Zall), fontsize=8)
+    pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % min(Zall), fontsize=8)
   if (nodeNumbers):
     for i in range(len(xnode)):
       pyplot.text(xnode[i]+.1, ynode[i]+.1, str(i+index))
   # Create colorbar
   nValues = arange(0, 30)
+
   if (minMax != None):
+
     cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
     scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
     scmap.set_array(nValues)
