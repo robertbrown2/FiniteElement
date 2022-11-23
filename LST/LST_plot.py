@@ -1,6 +1,8 @@
 def appendTriangles(plotTri, elemTri):
   from numpy import concatenate
   
+  if (plotTri == None):
+    return elemTri
   
   maxNode = -1
   for tri in plotTri:
@@ -68,7 +70,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   Xall = []
   Yall = []
   Zall = []
-  plotTriangles = []
+  plotTriangles = None
   for nodes in conn:
     # Find the x and y position of nodes for the local element
     xElem = []
