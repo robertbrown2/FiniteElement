@@ -5,7 +5,7 @@ def appendTriangles(plotTri, elemTri):
   maxNode = -1
   for tri in plotTri:
     maxNode = max(max(tri), maxNode)
-  elemTri += maxNode
+  elemTri += maxNode + 1
   outputTri = concatenate((plotTri, elemTri))
   return outputTri
 
@@ -90,7 +90,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
     triang = Triangulation(X, Y)
     elemTriangles = triang.triangles
-    plotTriangles = appendTriangles(elemTriangles)
+    plotTriangles = appendTriangles(plotTriangles, elemTriangles)
     Xall += X
     Yall += Y
     Zall += Z
@@ -99,7 +99,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   if (minMax==None):
     minMax = [min(Zall), max(Zall)]
     
-  pyplot.tricontourf(Xall, Yall, Zall, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
+  pyplot.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
   if (output != 'J'):
     xMax = xnode[0]
     xMin = xnode[0]
