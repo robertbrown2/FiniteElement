@@ -78,7 +78,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
       yElem.append(ynode[node-index])
   
     # Define deformation vector for local element
-    if (len(u) < 2):
+    if (type(u) == type(None)):
       uElem = None
     else:
       uElem = []
