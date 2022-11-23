@@ -88,7 +88,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
           
     [X, Y, Z] = LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
-    triang = Triangulation(X, Y)
+    triang = tri.Triangulation(X, Y)
     elemTriangles = triang.triangles
     plotTriangles = appendTriangles(plotTriangles, elemTriangles)
     Xall += X
