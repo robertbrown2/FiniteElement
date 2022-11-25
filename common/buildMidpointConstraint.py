@@ -26,7 +26,7 @@ def buildMidpointConstraint(constraint1, constraint2, node3):
       else:
         d2 = d2vals
       if (c1type == c2type):
-        c3.append(c1type)
+        c3+=c1type
         d3.append((d1+d2)/2)
   if (len(c3) > 1):
     return [node3, c3, d3]
