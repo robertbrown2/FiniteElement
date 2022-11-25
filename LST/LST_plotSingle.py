@@ -1,4 +1,4 @@
-def LST_map(xElem=None, yElem=None, xi, eta):
+def LST_map(xElem=None, yElem=None, xi=0, eta=0):
   """
   Get the x and y location associated with xi and eta.  Primarily an internal 
   function for Q4_plot and Q4_plotSingle.
