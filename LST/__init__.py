@@ -9,4 +9,3 @@ from .LST_mesh import LST_mesh
 from .LST_constraints import LST_constraints
 from .LST_forces import LST_forces
 from .LST_midpointNode import LST_midpointNode
-from .LST_stiffness import LST_stiffness
