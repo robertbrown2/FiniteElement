@@ -86,7 +86,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
       uElem = []
       for node in nodes:
         for j in range(nDOF):
-          uElem.append(u[nDOF*(node-index)_j])
+          uElem.append(u[nDOF*(node-index)+j])
           
     [X, Y, Z] = LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
