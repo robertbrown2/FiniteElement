@@ -74,7 +74,11 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
       if (i2 == None):
         print('could not find midpoint on line connecting nodes:', i1, i3)
         raise Exception
-        
+      
+      dir = lLoad[1]
+      dx = xnode[i3-index] - xnode[i1-index]
+      dy = ynode[i3-index] - ynode[i1-index]
+      L = sqrt(dx**2 + dy**2)
       f = lLoad[2]
       if (type(f) == type(1) or type(f) == type(1.0)):
         # Rectangular Load - F = int(psi*f, 0, L)
@@ -97,10 +101,7 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
         forces[i2-index] += F2
         forces[i3-index] += F3
       else:
-        dir = lLoad[1]
-        dx = xnode[i3-index] - xnode[i1-index]
-        dy = ynode[i3-index] - ynode[i1-index]
-        L = sqrt(dx**2 + dy**2)
+        
 
         if (dir == 'x'):
           F1x = F1
