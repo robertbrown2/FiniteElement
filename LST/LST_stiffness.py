@@ -21,5 +21,5 @@ def LST_stiffness(xElem, yElem, xi, eta, D, thickness=None, type2D='planeStress'
   if (type2D == 'axisymmetric'):
     psi = LST_shapeFunctions(xi, eta)
     thickness = 2*pi*(array(xElem) @ array(psi))
-  Area = linalg.det(LST_J)
+  Area = linalg.det(LST_J(xElem, yElem, xi, eta))
   return Area*thickness*(transpose(B)@D@B)
