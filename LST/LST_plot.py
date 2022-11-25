@@ -49,7 +49,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   from ..common.helpers import connIndex
   from .LST_plotSingle import LST_plotSingle
   
-  if (type(u) == type(None)):
+  if (type(u) == type(None) or type2D == 'diffusion'):
     deformedLines=False
   
   index = connIndex(conn)
@@ -59,6 +59,8 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   dyMax = max(ynode) - min(ynode)
   if (type(u) == type(None)):
     scaling = 1.0
+  if (type2D == 'diffusion'):
+    scaling = 0.0
   elif (scaling == None):
     rMax = sqrt(dxMax**2 + dyMax**2)
     uMax = max(max(u), abs(min(u)))
@@ -83,8 +85,8 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     else:
       uElem = []
       for node in nodes:
-        uElem.append(u[node*2-2])
-        uElem.append(u[node*2-1])
+        for j in range(nDOF):
+          uElem.append(u[nDOF*(node-index)_j])
           
     [X, Y, Z] = LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
@@ -111,8 +113,12 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     
     # Find bounds of plot to help place text
     for i, x in enumerate(xnode):
-      xd = xnode[i] + u[2*i]*scaling
-      yd = ynode[i] + u[2*i+1]*scaling
+      if (type2D == 'diffusion'):
+        xd = xnode[i]
+        yd = ynode[i]
+      else:
+        xd = xnode[i] + u[2*i]*scaling
+        yd = ynode[i] + u[2*i+1]*scaling
       xMax = max(xMax, xd, xnode[i])
       xMin = min(xMin, xd, xnode[i])
       yMax = max(yMax, yd, ynode[i])
