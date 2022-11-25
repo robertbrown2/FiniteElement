@@ -32,6 +32,13 @@ def LST_B(xElem, yElem, xi, eta, type2D='planeStress'):
       B[2, 2*i  ] = psi[i] / (array(xElem) @ array(psi))
       B[3, 2*i  ] = dpsidxy[1]
       B[3, 2*i+1] = dpsidxy[0]
+  elif (type2D == 'diffusion'):
+    # Heat transfer or mass diffusion
+    B = zeros((2, 6))
+    for i in range(6):
+      dpsidxy = Jinv @ array([dpsidxi[i], dpsideta[i]])
+      B[0, i] = dpsidxy[0] # B = [ dpsi_1/dx dpsi_2/dx ...]
+      B[1, i] = dpsidxy[1] #     [ dpsi_1/dy dpsi_2/dy ...]
   else:
     B = zeros((3, 12))
     for i in range(6):
