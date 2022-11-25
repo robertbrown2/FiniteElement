@@ -48,10 +48,12 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   from .LST_strain import LST_strain
   from ..common.helpers import connIndex
   from .LST_plotSingle import LST_plotSingle
+  from ..common.nDOF import nDOF as numDOF
   
   if (type(u) == type(None) or type2D == 'diffusion'):
     deformedLines=False
   
+  nDOF = numDOF(type2D)
   index = connIndex(conn)
   
   # Determine Scaling value
