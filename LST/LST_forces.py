@@ -52,8 +52,10 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
   forces = zeros(len(xnode)*nDOF)
   if (pointLoads != None):
     for pLoad in pointLoads:
-      dof = pLoad[0]*2 - 2*index
-      if (pLoad[1]=='x'):
+      dof = pLoad[0]*nDOF - nDOF*index
+      if (nDOF == 1):
+        forces[dof] = pLoad[2]
+      elif (pLoad[1]=='x'):
         forces[dof] = pLoad[2]
       elif (pLoad[1] == 'y'):
         forces[dof+1] = pLoad[2]
@@ -73,13 +75,6 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
         print('could not find midpoint on line connecting nodes:', i1, i3)
         raise Exception
       
-
-      dir = lLoad[1]
-      f = lLoad[2]
-      dx = xnode[i3-index] - xnode[i1-index]
-      dy = ynode[i3-index] - ynode[i1-index]
-      L = sqrt(dx**2 + dy**2)
-
       if (type(f) == type(1) or type(f) == type(1.0)):
         # Rectangular Load - F = int(psi*f, 0, L)
         frect = f
@@ -91,58 +86,71 @@ def LST_forces(xnode, ynode, conn, nDOF=2, pointLoads=None, lineLoads=None, face
       else:
         print('Load not recognized in LST_forces')
         raise Exception
-
+        
       F1 = frect*L/6 + ftri*L*0
       F2 = frect*L*2/3 + ftri*L/3
       F3 = frect*L/6 + ftri*L/6
+      
+      if (nDOF == 1):
+        forces[i1-index] += F1
+        forces[i2-index] += F2
+        forces[i3-index] += F3
+      else:
+        dir = lLoad[1]
+        f = lLoad[2]
+        dx = xnode[i3-index] - xnode[i1-index]
+        dy = ynode[i3-index] - ynode[i1-index]
+        L = sqrt(dx**2 + dy**2)
 
-      if (dir == 'x'):
-        F1x = F1
-        F2x = F2
-        F3x = F3
-        F1y = 0
-        F2y = 0
-        F3y = 0
-      elif (dir == 'y'):
-        F1x = 0
-        F2x = 0
-        F3x = 0
-        F1y = F1
-        F2y = F2
-        F3y = F3
-      elif (dir == 't'):
-        # force is in direction from 1->2
-        F1x = F1 * dx/L
-        F2x = F2 * dx/L
-        F3x = F3 * dx/L
-        F1y = F1 * dy/L
-        F2y = F2 * dy/L
-        F3y = F3 * dy/L
-      elif (dir == 'n'):
-        # force is in direction outward from element
-        elem = LST_findMidpointFromLine(lLoad[0], conn, 'element')
-        left = isElemOnLeft(xnode, ynode, elem, [i1, i3], index)
-        if (left):
-          # normal points to right
-          F1x =   F1 * dy/L
-          F2x =   F2 * dy/L
-          F3x =   F3 * dy/L
-          F1y = - F1 * dx/L
-          F2y = - F2 * dx/L
-          F3y = - F3 * dx/L
-        else:
-          F1x = - F1 * dy/L
-          F2x = - F2 * dy/L
-          F3x = - F3 * dy/L
-          F1y =   F1 * dx/L
-          F2y =   F2 * dx/L
-          F3y =   F3 * dx/L
-      forces[2*(i1-index)] += F1x
-      forces[2*(i2-index)] += F2x
-      forces[2*(i3-index)] += F3x
-      forces[2*(i1-index)+1] += F1y
-      forces[2*(i2-index)+1] += F2y
-      forces[2*(i3-index)+1] += F3y
+      
+
+        if (dir == 'x'):
+          F1x = F1
+          F2x = F2
+          F3x = F3
+          F1y = 0
+          F2y = 0
+          F3y = 0
+        elif (dir == 'y'):
+          F1x = 0
+          F2x = 0
+          F3x = 0
+          F1y = F1
+          F2y = F2
+          F3y = F3
+        elif (dir == 't'):
+          # force is in direction from 1->2
+          F1x = F1 * dx/L
+          F2x = F2 * dx/L
+          F3x = F3 * dx/L
+          F1y = F1 * dy/L
+          F2y = F2 * dy/L
+          F3y = F3 * dy/L
+        elif (dir == 'n'):
+          # force is in direction outward from element
+          elem = LST_findMidpointFromLine(lLoad[0], conn, 'element')
+          left = isElemOnLeft(xnode, ynode, elem, [i1, i3], index)
+          if (left):
+            # normal points to right
+            F1x =   F1 * dy/L
+            F2x =   F2 * dy/L
+            F3x =   F3 * dy/L
+            F1y = - F1 * dx/L
+            F2y = - F2 * dx/L
+            F3y = - F3 * dx/L
+          else:
+            F1x = - F1 * dy/L
+            F2x = - F2 * dy/L
+            F3x = - F3 * dy/L
+            F1y =   F1 * dx/L
+            F2y =   F2 * dx/L
+            F3y =   F3 * dx/L
+        forces[2*(i1-index)] += F1x
+        forces[2*(i2-index)] += F2x
+        forces[2*(i3-index)] += F3x
+        forces[2*(i1-index)+1] += F1y
+        forces[2*(i2-index)+1] += F2y
+        forces[2*(i3-index)+1] += F3y
 
   if (faceLoads != None):
     print('faceLoads not yet implemented in LST_forces!')
