@@ -91,7 +91,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
         if (output == 'T'):
           Z.append(LST_map(u, xi=xi, eta=eta))
         elif (output == 'qx' or output == 'qy'):
-          Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
+          Z.append(LST_stress(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
         else:
           print('Mismatch between output type and type2D: ', type2D, ' has no output ', output)
           raise Exception
