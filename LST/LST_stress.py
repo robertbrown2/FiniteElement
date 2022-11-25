@@ -26,9 +26,9 @@ def LST_stress(xElem, yElem, u, xi, eta, D, type2D='PlaneStress', output='VM'):
 
   eps = array(LST_strain(xElem, yElem, u, xi, eta, type2D))
   sigxy = D @ eps
-  if (output == 'sigx'):
+  if (output == 'sigx' or output=='qx'):
     return sigxy[0]
-  elif (output == 'sigy'):
+  elif (output == 'sigy' or output=='qy'):
     return sigxy[1]
   elif (output == 'tauxy'):
     return sigxy[2]
