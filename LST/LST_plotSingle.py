@@ -1,4 +1,4 @@
-def LST_map(xElem, yElem, xi, eta):
+def LST_map(xElem=None, yElem=None, xi, eta):
   """
   Get the x and y location associated with xi and eta.  Primarily an internal 
   function for Q4_plot and Q4_plotSingle.
@@ -7,13 +7,22 @@ def LST_map(xElem, yElem, xi, eta):
   
   psi = LST_shapeFunctions(xi, eta)
   
+  if (yElem == None):
+    x = 0
+    for i, p in enumerate(psi):
+      x += p*xElem[i]
+    return x
+  if (xElem == None):
+    y = 0
+    for i, p in enumerate(psi):
+      y += p*yElem[i]
+    return y
+  
   x = 0
   y = 0
-  
   for i, p in enumerate(psi):
     x += p*xElem[i]
     y += p*yElem[i]
-  
   return([x,y])
 
 def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot=10, 
@@ -49,16 +58,16 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
   from .LST_J import LST_J
   
   # Get deformed node locations
-  if (u != None):
+  if (u == None or type2D=='diffusion'):
+    xd = xElem
+    yd = yElem
+  else:
     xd = []
     yd = []
     for i, x in enumerate(xElem):
       xd.append(x+scaling*u[2*i])
     for i, y in enumerate(yElem):
       yd.append(y+scaling*u[2*i+1])
-  else:
-    xd = xElem
-    yd = yElem
 
   # Initialize mesh values
   X = []
@@ -70,10 +79,22 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
       eta = 1-(j/nPlot)
       if (output == 'J'):
         Z.append(linalg.det(LST_J(xElem, yElem, xi, eta)))
-      elif (output == 'VM' or output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2'):
-        Z.append(LST_stress(xElem, yElem, u, xi, eta, D, type2D=type2D, output=output))
-      elif (output == 'epsx' or output == 'epsy' or output == 'gammaxy'):
-        Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
+      elif (type2D == 'planeStress' or type2D == 'planeStrain' or type2D == 'axisymmetric'):
+        if (output == 'VM' or output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2'):
+          Z.append(LST_stress(xElem, yElem, u, xi, eta, D, type2D=type2D, output=output))
+        elif (output == 'epsx' or output == 'epsy' or output == 'gammaxy'):
+          Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
+        else:
+          print('Mismatch between output type and type2D: ', type2D, ' has no output ', output)
+          raise Exception
+      elif (type2D == 'diffusion'):
+        if (output == 'T'):
+          Z.append(LST_map(u, xi=xi, eta=eta))
+        elif (output == 'qx' or output == 'qy'):
+          Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output)
+        else:
+          print('Mismatch between output type and type2D: ', type2D, ' has no output ', output)
+          raise Exception
       else:
         print('Output type', output, ' not supported')
         raise Exception
@@ -86,7 +107,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
     x=[xElem[0], xElem[1], xElem[2], xElem[0]]
     y=[yElem[0], yElem[1], yElem[2], yElem[0]]
     pyplot.plot(x, y, 'k--')
-  if (deformedLines):
+  if (deformedLines and type2D != 'diffusion'):
     pyplot.plot([xd[0], xd[5], xd[1], xd[3], xd[2], xd[4], xd[0]], 
          [yd[0], yd[5], yd[1], yd[3], yd[2], yd[4], yd[0]], 'k')
 
