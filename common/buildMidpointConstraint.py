@@ -4,23 +4,33 @@ def buildMidpointConstraint(constraint1, constraint2, node3):
   constraint1 and constraint2 are the two nodal constraints
   node3 is the node associated with the midpoint.
   """
-  from ..common.parseConstraint import parseConstraint
-  cx1, cy1, dx1, dy1, n1 = parseConstraint(constraint1)
-  cx2, cy2, dx2, dy2, n2 = parseConstraint(constraint2)
-  cx3 = False
-  cy3 = False
-  if (cx1 and cx2):
-    cx3 = True
-    dx3 = (dx1 + dx2)/2
-  if (cy1 and cy2):
-    cy3 = True
-    dy3 = (dy1 + dy2)/2
+  #from ..common.parseConstraint import parseConstraint
+  #cx1, cy1, dx1, dy1, n1 = parseConstraint(constraint1)
+  #cx2, cy2, dx2, dy2, n2 = parseConstraint(constraint2)
+  c3 = ''
+  d3 = []
   
-  if (cx3 and not cy3):
-    return [node3, 'x', dx3]
-  elif (cy3 and not cx3):
-    return [node3, 'y', dy3]
-  elif (cx3 and cy3):
-    return [node3, 'xy', [dx3, dy3]]
+  c1types = constraint1[1]
+  c2types = constraint2[1]
+  d1vals = constraint1[2]
+  d2vals = constraint2[2]
+  
+  for i1, c1type in enumerate(c1types):
+    for i2, c2type in enumerate(c2types):
+      if (len(c1types)>1):
+        d1 = d1vals[i1]
+      else:
+        d1 = d1vals
+      if (len(c2types)>1):
+        d2 = d2vals[i2]
+      else:
+        d2 = d2vals
+      if (c1type == c2type):
+        c3.append(c1type)
+        d3.append((d1+d2)/2)
+  if (len(c3) > 1):
+    return [node3, c3, d3]
+  elif (len(c3) == 1):
+    return [node3, c3, d3[0]]
   else:
     return None
