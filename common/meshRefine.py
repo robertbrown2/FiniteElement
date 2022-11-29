@@ -73,8 +73,22 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads, constraints):
               else:
                 line1 = [line[1], iLine + len(xnode) + index]
                 line2 = [iLine + len(xnode) + index, line[0]]
-              lineLoadsNew.append([line1, load[1], load[2]])
-              lineLoadsNew.append([line2, load[1], load[2]])
+              try:
+                if (len(load[2])==2):
+                  triload = load[2]
+                  triload1 = [triload[0], (triload[0]+triload[1])/2]
+                  triload2 = [(triload[0]+triload[1])/2, triload[1]]
+                  lineLoadsNew.append([line1, load[1], triload1])
+                  lineLoadsNew.append([line2, load[1], triload2])
+                else:
+                  print('Line load is a list with ', len(load[2]), 'items.')
+                  print('Line load should either be a float or a list with 2 items.')
+                  raise Exception
+                  
+              except TypeError:
+                # This is a float
+                lineLoadsNew.append([line1, load[1], load[2]])
+                lineLoadsNew.append([line2, load[1], load[2]])
         
       # 1-6-5
       connNew.append([elem[0], lineNodes[2], lineNodes[1]])
