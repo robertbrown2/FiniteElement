@@ -5,7 +5,7 @@ def CST_B(x1, x2, x3, y1, y2, y3):
   Returns a 3x6 array.
   """
   from numpy import array, linalg
-  from CST.CST_J import CST_J
+  from .CST_J import CST_J
   # psi1 = 1 - xi - eta
   # psi2 = xi
   # psi3 = eta
