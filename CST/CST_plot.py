@@ -12,7 +12,7 @@ def get_color(val, min, max, colormap):
   colorVal = colormap(float(x)) #scalarMap.to_rgba(x)
   return colorVal
 
-def my_CST_plot(xList, yList, conn, u, sigmaMax, 
+def CST_plot(xList, yList, conn, u, sigmaMax, 
                 stressUnit="", lengthUnit="", cmapString="jet", scaling=None, equalAxis=True):
   """
   Plots a completed simulation using CST elements.
