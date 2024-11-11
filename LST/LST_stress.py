@@ -26,12 +26,31 @@ def LST_stress(xElem, yElem, u, xi, eta, D, type2D='PlaneStress', output='VM'):
 
   eps = array(LST_strain(xElem, yElem, u, xi, eta, type2D))
   sigxy = D @ eps
-  if (output == 'sigx'):
+  if (output == 'sigx' or output == 'sigr'):
     return sigxy[0]
-  elif (output == 'sigy'):
+  elif (output == 'sigy' or output == 'sigz'):
     return sigxy[1]
-  elif (output == 'tauxy'):
+  elif (output == 'tauxy' or output == 'sigth'):
     return sigxy[2]
+  elif (output == 'taurz' and type2D == 'axisymmetric'):
+    return sigxy[3]
+  elif (type2D == 'axisymmetric'):
+    sigr = sigxy[0]
+    sigz = sigxy[1]
+    sigth = sigxy[2]
+    taurz = sigxy[3]
+    sig1 = (sigr + sigz)/2 + sqrt((sigr - sigz)**2/2 + taurz**2)
+    sig2 = (sigr + sigz)/2 - sqrt((sigr - sigz)**2/2 + taurz**2)
+    sig3 = sigth
+    if (output == 'sig1'):
+      return sig1
+    elif (output == 'sig2'):
+      return sig2
+    elif (output == 'VM'):
+      return sqrt(1/2)*sqrt((sig1-sig2)**2 + (sig2-sig3)**2 + (sig3-sig1)**2)
+    else:
+      print('Varible "output" not recognized in LST_stress')
+      raise Exception
   else:
     sigx = sigxy[0]
     sigy = sigxy[1]
@@ -49,5 +68,5 @@ def LST_stress(xElem, yElem, u, xi, eta, D, type2D='PlaneStress', output='VM'):
     elif (output == 'VM'):
       return sqrt(1/2)*sqrt((sig1-sig2)**2 + (sig2-sig3)**2 + (sig3-sig1)**2)
     else:
-      print('Variable output in Q4_stress must be sigx, sigy, tauxy, sig1, sig2, or VM')
+      print('Varible "output" not recognized in LST_stress')
       raise Exception
