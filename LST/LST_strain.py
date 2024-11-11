@@ -23,7 +23,7 @@ def LST_strain(xElem, yElem, u, xi, eta, type2D='planeStress', output=None):
 
   # If a value in x goes to 0, it breaks the axisymmetric stress.
   if type2D == 'axisymmetric' and any(xElem < max(xElem) * 1e-3):
-    for i, x in xElem:
+    for i, x in enumerate(xElem):
       if xElem[i] < max(xElem) * 1e-3:
         xElem[i] = max(xElem) * 1e-3
   
