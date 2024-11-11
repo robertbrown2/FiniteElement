@@ -90,7 +90,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
       elif (type2D == 'axisymmetric'):
         if (output == 'VM' or output == 'sigr' or output == 'sigz' or 
             output == 'sigth' or output == 'taurz' or output == 'sig1' or output == 'sig2'):
-              Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
+              Z.append(LST_stress(xElem, yElem, u, xi, eta, D, type2D=type2D, output=output))
         elif (output == 'epsr' or output == 'epsz' or output == 'epsth' or output == 'gammarz'):
             Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
         else:
