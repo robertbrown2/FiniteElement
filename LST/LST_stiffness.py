@@ -12,7 +12,7 @@ def LST_stiffness(xElem, yElem, xi, eta, D, thickness=None, type2D='planeStress'
   D - (array) constituitive matrix
   thickness - (float) thickness of element in third dimension
   """
-  from numpy import array, linalg, transpose
+  from numpy import array, linalg, transpose, pi
   from .LST_B import LST_B
   from .LST_J import LST_J
   from .LST_shapeFunctions import LST_shapeFunctions
