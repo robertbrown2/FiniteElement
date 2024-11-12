@@ -132,7 +132,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     figtitle1 = 'Deformation scaled by ' + str(int(scaling)) + 'x'
     figtitle2 = 'Max stress = %8.3e ' % max(Zall)
     figtitle3 = 'Min stress = %8.3e ' % min(Zall)
-    figtitle = ''.join(figtitle1, figtitle2, figtitle3)
+    figtitle = ''.join([figtitle1, figtitle2, figtitle3])
     fig.suptitle(figtitle, fontsize=10, verticalalignment='bottom')
   if (nodeNumbers):
     for i in range(len(xnode)):
