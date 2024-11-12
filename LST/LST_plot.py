@@ -41,7 +41,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   from matplotlib import cm
   from matplotlib import colors
   #from matplotlib import colorbar
-  from matplotlib import figure
+  #from matplotlib import figure
   from matplotlib import tri
   from numpy import sqrt, floor, arange, linspace, array
   from .LST_stress import LST_stress
@@ -64,7 +64,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     uMax = max(max(u), abs(min(u)))
     scaling = max(floor(rMax/(25*uMax)), 1)
   
-  fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
+  fig = pyplot.figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
   Xall = []
   Yall = []
   Zall = []
