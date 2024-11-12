@@ -129,8 +129,8 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     #pyplot.text(xAvg - .6*(dx), yMin - (dy)*.15, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
     #pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % max(Zall), fontsize=8)
     #pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % min(Zall), fontsize=8)
-    figtitle1 = 'Deformation scaled by ' + str(int(scaling)) + 'x'
-    figtitle2 = 'Max stress = %8.3e ' % max(Zall)
+    figtitle1 = 'Deformation scaled by ' + str(int(scaling)) + 'x\n'
+    figtitle2 = 'Max stress = %8.3e      ' % max(Zall)
     figtitle3 = 'Min stress = %8.3e ' % min(Zall)
     figtitle = ''.join([figtitle1, figtitle2, figtitle3])
     fig.suptitle(figtitle, fontsize=10, verticalalignment='bottom')
@@ -145,7 +145,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
     scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
     scmap.set_array(nValues)
-    cbar = fig.colorbar(scmap)
+    cbar = fig.colorbar(scmap, ax=ax)
   
     # Label colorbar
     if (output == 'VM'):
