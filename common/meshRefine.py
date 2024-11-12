@@ -58,7 +58,9 @@ def meshRefine(xnode, ynode, conn, lineLoads, faceLoads, constraints):
                 c1 = constraints[i]
               if (cNode == line[1]):
                 c2 = constraints[i]
-            constraintsNew.append(buildMidpointConstraint(c1, c2, iLine + len(xnode) + index))
+            cnew = buildMidpointConstraint(c1, c2, iLine + len(xnode) + index)
+            if (type(cnew) != type(None)):
+              constraintsNew.append(cnew)
           
         lineNodes.append(iLine+len(xnode)+index)
         if (lineLoads != None):
