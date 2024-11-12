@@ -162,3 +162,4 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
       cbar.set_label('Max normal stress')
     elif (output == 'sig2'):
       cbar.set_label('Min normal stress')
+ax.axis=('equal')
