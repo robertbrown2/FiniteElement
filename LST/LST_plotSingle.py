@@ -79,7 +79,7 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
       eta = 1-(j/nPlot)
       if (output == 'J'):
         Z.append(linalg.det(LST_J(xElem, yElem, xi, eta)))
-      elif (type2D == 'planeStress' or type2D == 'planeStrain'):
+      elif (type2D == 'planeStress' or type2D == 'planeStrain' or type2D == 'axisymmetric'):
         if (output == 'VM' or output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2'):
           Z.append(LST_stress(xElem, yElem, u, xi, eta, D, type2D=type2D, output=output))
         elif (output == 'epsx' or output == 'epsy' or output == 'gammaxy'):
@@ -87,20 +87,11 @@ def LST_plotSingle(xElem, yElem, u=None, D=None, minMax=None, output='VM', nPlot
         else:
           print('Mismatch between output type and type2D: ', type2D, ' has no output ', output)
           raise Exception
-      elif (type2D == 'axisymmetric'):
-        if (output == 'VM' or output == 'sigr' or output == 'sigz' or 
-            output == 'sigth' or output == 'taurz' or output == 'sig1' or output == 'sig2'):
-              Z.append(LST_stress(xElem, yElem, u, xi, eta, D, type2D=type2D, output=output))
-        elif (output == 'epsr' or output == 'epsz' or output == 'epsth' or output == 'gammarz'):
-            Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
-        else:
-          print('Mismatch between output type and type2D: ', type2D, ' has no output ', output)
-          raise Exception
       elif (type2D == 'diffusion'):
         if (output == 'T'):
           Z.append(LST_map(u, xi=xi, eta=eta))
         elif (output == 'qx' or output == 'qy'):
-          Z.append(LST_strain(xElem, yElem, u, xi, eta, type2D=type2D, output=output))
+          Z.append(-LST_stress(xElem, yElem, u, xi, eta, D, type2D=type2D, output=output))
         else:
           print('Mismatch between output type and type2D: ', type2D, ' has no output ', output)
           raise Exception

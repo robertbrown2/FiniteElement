@@ -19,27 +19,17 @@ def LST_strain(xElem, yElem, u, xi, eta, type2D='planeStress', output=None):
   tauxy: (float) shear strain
   """
   from .LST_B import LST_B
-  from numpy import any, max
 
-  # If a value in x goes to 0, it breaks the axisymmetric stress.
-  if type2D == 'axisymmetric' and any(xElem < max(xElem) * 1e-3):
-    for i, x in enumerate(xElem):
-      if xElem[i] < max(xElem) * 1e-3:
-        xElem[i] = max(xElem) * 1e-3
-  
   B = LST_B(xElem, yElem, xi, eta, type2D)
-  
   eps = B @ array(u)
   if (output == None):
     return eps
-  elif (output == 'epsx' or output == 'epsr'):
+  elif (output == 'epsx'):
     return eps[0]
-  elif (output == 'epsy' or output == 'epsz'):
+  elif (output == 'epsy'):
     return eps[1]
-  elif (output == 'gammaxy' or output == 'epsth'):
+  elif (output == 'gammaxy'):
     return eps[2]
-  elif (output == 'gammarz' and type2D == 'axisymmetric'):
-    return eps[3]
   else:
     print('Error in Q4_strain: output not recognized')
     raise Exception
