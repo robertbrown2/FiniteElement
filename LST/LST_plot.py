@@ -1,4 +1,3 @@
-
 def appendTriangles(plotTri, elemTri):
   from numpy import concatenate, amax
   
@@ -42,17 +41,19 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   from matplotlib import cm
   from matplotlib import colors
   #from matplotlib import colorbar
-  #from matplotlib import figure
+  from matplotlib import figure
   from matplotlib import tri
   from numpy import sqrt, floor, arange, linspace, array
   from .LST_stress import LST_stress
   from .LST_strain import LST_strain
   from ..common.helpers import connIndex
   from .LST_plotSingle import LST_plotSingle
+  from ..common.nDOF import nDOF as numDOF
   
-  if (type(u) == type(None)):
+  if (type(u) == type(None) or type2D == 'diffusion'):
     deformedLines=False
   
+  nDOF = numDOF(type2D)
   index = connIndex(conn)
   
   # Determine Scaling value
@@ -60,18 +61,14 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
   dyMax = max(ynode) - min(ynode)
   if (type(u) == type(None)):
     scaling = 1.0
+  if (type2D == 'diffusion'):
+    scaling = 0.0
   elif (scaling == None):
     rMax = sqrt(dxMax**2 + dyMax**2)
     uMax = max(max(u), abs(min(u)))
     scaling = max(floor(rMax/(25*uMax)), 1)
   
-  #fig = pyplot.figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
-  fig, ax = pyplot.subplots()
-  fig.set_figheight(5)
-  fig.set_figwidth(8)
-  fig.set_dpi(100)
-  fig.set_facecolor('w')
-  fig.set_edgecolor('k')
+  fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
   Xall = []
   Yall = []
   Zall = []
@@ -90,8 +87,8 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     else:
       uElem = []
       for node in nodes:
-        uElem.append(u[node*2-2])
-        uElem.append(u[node*2-1])
+        for j in range(nDOF):
+          uElem.append(u[nDOF*(node-index)+j])
           
     [X, Y, Z] = LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
@@ -107,9 +104,9 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     minMax = [min(Zall), max(Zall)]
   
   if (abs(min(Zall) - max(Zall))<1e-10):
-    ax.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], cmap=colormap)
+    pyplot.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], cmap=colormap)
   else:
-    ax.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
+    pyplot.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
   if (output != 'J'):
     xMax = xnode[0]
     xMin = xnode[0]
@@ -118,8 +115,12 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     
     # Find bounds of plot to help place text
     for i, x in enumerate(xnode):
-      xd = xnode[i] + u[2*i]*scaling
-      yd = ynode[i] + u[2*i+1]*scaling
+      if (type2D == 'diffusion'):
+        xd = xnode[i]
+        yd = ynode[i]
+      else:
+        xd = xnode[i] + u[2*i]*scaling
+        yd = ynode[i] + u[2*i+1]*scaling
       xMax = max(xMax, xd, xnode[i])
       xMin = min(xMin, xd, xnode[i])
       yMax = max(yMax, yd, ynode[i])
@@ -127,17 +128,12 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     xAvg = (xMax + xMin)/2
     dx = xMax - xMin
     dy = yMax - yMin
-    #pyplot.text(xAvg - .6*(dx), yMin - (dy)*.15, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
-    #pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % max(Zall), fontsize=8)
-    #pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % min(Zall), fontsize=8)
-    figtitle1 = 'Deformation scaled by ' + str(int(scaling)) + 'x\n'
-    figtitle2 = 'Max stress = %8.3e      ' % max(Zall)
-    figtitle3 = 'Min stress = %8.3e ' % min(Zall)
-    figtitle = ''.join([figtitle1, figtitle2, figtitle3])
-    fig.suptitle(figtitle, fontsize=10, verticalalignment='bottom')
+    pyplot.text(xAvg - .6*(dx), yMin - (dy)*.15, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
+    pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % max(Zall), fontsize=8)
+    pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % min(Zall), fontsize=8)
   if (nodeNumbers):
     for i in range(len(xnode)):
-      ax.text(xnode[i]+.1, ynode[i]+.1, str(i+index))
+      pyplot.text(xnode[i]+.1, ynode[i]+.1, str(i+index))
   # Create colorbar
   nValues = arange(0, 30)
 
@@ -146,7 +142,7 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
     scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
     scmap.set_array(nValues)
-    cbar = fig.colorbar(scmap, ax=ax)
+    cbar = pyplot.colorbar(scmap)
   
     # Label colorbar
     if (output == 'VM'):
@@ -163,4 +159,3 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
       cbar.set_label('Max normal stress')
     elif (output == 'sig2'):
       cbar.set_label('Min normal stress')
-  ax.axis('equal')
