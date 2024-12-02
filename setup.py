@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='FiniteElement',
-    version='0.1',
+    version='0.2',
     author='Robert Brown',
     description='Simple Finite Element Solver',
     url='https://github.com/robertbrown2/FiniteElement',
