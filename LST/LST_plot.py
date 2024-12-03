@@ -1,3 +1,19 @@
+def createTriangles(nPlot):
+  tri = []
+  base = 0
+  nextbase = nPlot + 1
+  for i in range(nPlot):
+    for j in range(i, nPlot):
+      triangle = [base+j-i, base + 1+j-i, nextbase+j-i]
+      tri.append(triangle)
+    for j in range(i+1, nPlot):
+      triangle = [base + j-i, nextbase + j-i, nextbase + j-i-1]
+      tri.append(triangle)
+    base = nextbase
+    nextbase = base + nPlot - i
+  return tri
+      
+
 def appendTriangles(plotTri, elemTri):
   from numpy import concatenate, amax
   
@@ -9,8 +25,37 @@ def appendTriangles(plotTri, elemTri):
   outputTri = concatenate((plotTri, elemTri))
   return outputTri
 
-def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, nPlot=2, 
-                  colormap='jet', undeformedLines=True, deformedLines=True, nodeNumbers=True):
+def outputString(type2D, output):
+  if output == 'J':
+    outStr = 'Jacobian'
+  elif type2D == 'planeStress' or type2D == 'planeStrain':
+    if output == 'sigx' or output == 'sigy' or output == 'tauxy' or output == 'sig1' or output == 'sig2' or output == 'VM':
+      outStr = 'stress'
+    elif output == 'epsx' or output == 'epsy' or output == 'gammaxy':
+      outStr = 'strain'
+    else:
+      raise Exception('Error in LST_plot: output not in list for planeStress/planeStrain')
+  elif type2D == 'axisymmetric':
+    if output == 'sigr' or output == 'sigz' or output == 'sigth' or output == 'taurz' or output == 'sig1' or output == 'sig2' or output == 'VM':
+      outStr = 'stress'
+    elif output == 'epsr' or output == 'epsz' or output == 'epsth' or output == 'gammarz':
+      outStr = 'strain'
+    else:
+      raise Exception('Error in LST_plot: output not in list for axisymmetric')
+  elif type2D == 'diffusion':
+    if output == 'T':
+      outStr = 'temperature'
+    elif output == 'qx' or output == 'qy':
+      outStr = 'flux'
+    else:
+      raise Exception('Error in LST_plot: output not in list for diffusion')
+  else:
+    raise Exception('Error in LST_plot: type2D not in list')
+  return outStr
+
+def LST_plot(conn, xnode, ynode, u=None, D=None, 
+             type2D="planeStress", output="J", scaling=None, minMax=None, nPlot=2, 
+             colormap='jet', undeformedLines=True, deformedLines=True, nodeNumbers=True):
   """
   Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
   Usage (Jacobian) - plotAll(conn, xnode, ynode)
@@ -68,11 +113,18 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     uMax = max(max(u), abs(min(u)))
     scaling = max(floor(rMax/(25*uMax)), 1)
   
-  fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
+  #fig = figure.Figure(figsize=(8, 5), dpi=100, facecolor='w', edgecolor='k')
+  fig, ax = pyplot.subplots()
+  fig.set_figheight(5)
+  fig.set_figwidth(8)
+  fig.set_dpi(100)
+  fig.set_facecolor('w')
+  fig.set_edgecolor('k')
   Xall = []
   Yall = []
   Zall = []
   plotTriangles = None
+  elemTriangles = createTriangles(nPlot)
   for nodes in conn:
     # Find the x and y position of nodes for the local element
     xElem = []
@@ -92,21 +144,22 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
           
     [X, Y, Z] = LST_plotSingle(xElem, yElem, uElem, D, minMax, output, nPlot, 
                   colormap, undeformedLines, deformedLines, scaling, type2D=type2D)
-    triang = tri.Triangulation(X, Y)
-    elemTriangles = triang.triangles
+    
     plotTriangles = appendTriangles(plotTriangles, elemTriangles)
     Xall += X
     Yall += Y
     Zall += Z
+  plotTri = tri.Triangulation(Xall, Yall, plotTriangles)
   #pyplot.xlabel('x')
   #pyplot.ylabel('y')
   if (minMax==None):
     minMax = [min(Zall), max(Zall)]
   
   if (abs(min(Zall) - max(Zall))<1e-10):
-    pyplot.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], cmap=colormap)
+    ax.tricontourf(plotTri, Zall, vmin=minMax[0], vmax=minMax[1], cmap=colormap)
   else:
-    pyplot.tricontourf(Xall, Yall, Zall, triangles=plotTriangles, vmin=minMax[0], vmax=minMax[1], levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
+    ax.tricontourf(plotTri, Zall, vmin=minMax[0], vmax=minMax[1], 
+                   levels=linspace(minMax[0], minMax[1], 20), cmap=colormap)
   if (output != 'J'):
     xMax = xnode[0]
     xMin = xnode[0]
@@ -128,12 +181,15 @@ def LST_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J
     xAvg = (xMax + xMin)/2
     dx = xMax - xMin
     dy = yMax - yMin
-    pyplot.text(xAvg - .6*(dx), yMin - (dy)*.15, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
-    pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, 'Max stress = %8.3e ' % max(Zall), fontsize=8)
-    pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, 'Min stress = %8.3e ' % min(Zall), fontsize=8)
+    if (type2D != 'diffusion'):
+      pyplot.text(xAvg - .6*(dx), yMin - (dy)*.15, 'Deformation scaled by ' + str(int(scaling)) + 'x', fontsize=8)
+    oString = outputString(type2D, output)
+    pyplot.text(xAvg - .05*(dx), yMin - (dy)*.15, f'Max {oString} = {max(Zall):8.3e}', fontsize=8)
+    pyplot.text(xAvg + .4*(dx), yMin - (dy)*.15, f'Min {oString} = {min(Zall):8.3e}', fontsize=8)
+    
   if (nodeNumbers):
     for i in range(len(xnode)):
-      pyplot.text(xnode[i]+.1, ynode[i]+.1, str(i+index))
+      pyplot.text(xnode[i]+.01*dx, ynode[i]+.01*dx, str(i+index))
   # Create colorbar
   nValues = arange(0, 30)
 
