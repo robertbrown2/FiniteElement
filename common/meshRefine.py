@@ -247,7 +247,7 @@ def meshRefine(xnode, ynode, conn, bcs, conn2line=[], line2node=[]):
         bc3 = bc.copy()
         bc4 = bc.copy()
         
-        newElems = connUpdateList(elemNum)
+        newElems = connUpdateList[elemNum]
         bc1.nodes = connNew[newElems[0]]
         bc2.nodes = connNew[newElems[1]]
         bc3.nodes = connNew[newElems[2]]
