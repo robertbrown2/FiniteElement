@@ -238,7 +238,7 @@ def meshRefine(xnode, ynode, conn, bcs, conn2line=[], line2node=[]):
         bcsNew.append(bc2)
     elif bc.geom == 'face':
       # Face boundary conditions should be applied to new child faces
-      elemNum = cellExists(bc.nodes, conn)
+      elemNum = cellExists(conn, bc.nodes)
       if lineNum == -1:
         raise Exception('You done goofed in bc "nodes": cell does not exist in conn')
       else:
