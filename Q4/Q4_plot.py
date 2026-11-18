@@ -1,5 +1,5 @@
 def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J", scaling=None, minMax=None, Nplot=10, 
-                  colormap='jet', undeformedLines=True, deformedLines=True):
+                  colormap='jet', undeformedLines=True, deformedLines=True, ax=None):
   """
   Plot the entire 2D solid.  Defaults to plotting the determinant of the Jacobian on the undeformed mesh.
   Usage (Jacobian) - plotAll(conn, xnode, ynode)
@@ -31,11 +31,13 @@ def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J"
   from matplotlib import colors
   #from matplotlib import colorbar
   from matplotlib import figure
-  from numpy import sqrt, floor, arange
+  from numpy import sqrt, floor, arange, max, min
   from .Q4_plotSingle import Q4_plotSingle
   from .Q4_stress import Q4_stress
   from .Q4_strain import Q4_strain
-  
+
+  if ax is None:
+    ax = pyplot.gca()
   if (len(u) < 2):
     deformedLines=False
   if (minMax == None):
@@ -131,7 +133,7 @@ def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J"
   cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
   scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
   scmap.set_array(nValues)
-  cbar = pyplot.colorbar(scmap)
+  cbar = pyplot.colorbar(scmap, ax=ax)
   
   # Label colorbar
   if (output == 'VM'):
