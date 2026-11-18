@@ -31,7 +31,7 @@ def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J"
   from matplotlib import colors
   #from matplotlib import colorbar
   from matplotlib import figure
-  from numpy import sqrt, floor, arange, max, min
+  from numpy import sqrt, floor, arange
   from .Q4_plotSingle import Q4_plotSingle
   from .Q4_stress import Q4_stress
   from .Q4_strain import Q4_strain
