@@ -133,7 +133,7 @@ def Q4_plot(conn, xnode, ynode, u=None, D=None, type2D="planeStress", output="J"
   cnorm = colors.Normalize(vmin = minMax[0], vmax = minMax[1])
   scmap = cm.ScalarMappable(norm=cnorm, cmap=colormap)
   scmap.set_array(nValues)
-  cbar = pyplot.colorbar(scmap, ax=ax)
+  cbar = ax.figure.colorbar(scmap, ax=ax)
   
   # Label colorbar
   if (output == 'VM'):
